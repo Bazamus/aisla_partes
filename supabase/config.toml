@@ -1,0 +1,11 @@
+# supabase/config.toml
+project_id = "jhfyxgzsandolhbufvrb"
+
+[functions]
+  # Aquí se pueden añadir configuraciones específicas por función si es necesario en el futuro.
+  # Por ejemplo, para especificar un import_map diferente para una función.
+  # [functions.my_function]
+  #   import_map = "./my_function_import_map.json"
+
+# Generalmente, la CLI buscará un archivo 'import_map.json' en la raíz de la carpeta 'supabase'
+# o dentro de la carpeta de cada función si no se especifica de otra manera.

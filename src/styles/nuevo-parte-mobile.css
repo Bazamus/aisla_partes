@@ -1,0 +1,658 @@
+/* Estilos específicos para Nuevo Parte en móvil - Aplicación inmediata */
+
+/* Aplicar solo en pantallas móviles */
+@media screen and (max-width: 768px) {
+
+  /* ========================================
+     AJUSTES DE LAYOUT PARA ANCHO COMPLETO
+     ======================================== */
+
+  /* Contenedor principal - Sin padding extra */
+  .nuevo-parte-mobile {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Contenedor de página principal - Padding mínimo lateral */
+  .nuevo-parte-mobile.min-h-screen,
+  .min-h-screen.nuevo-parte-mobile {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 84px !important;
+    padding-bottom: 20px !important;
+  }
+
+  /* FORMULARIO - Ancho completo sin padding lateral */
+  html body .nuevo-parte-mobile form,
+  html body form.nuevo-parte-mobile {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* CRÍTICO: Forzar TODOS los contenedores max-w-* a ancho completo - MÁXIMA ESPECIFICIDAD */
+  html body div.min-h-screen.nuevo-parte-mobile,
+  html body div.min-h-screen.mobile-content-wrapper {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-top: 84px !important;
+    padding-bottom: 20px !important;
+  }
+
+  /* Contenedores max-w-7xl - Línea 528 NuevoParte.jsx - Ancho completo con padding mínimo */
+  html body .min-h-screen > .max-w-7xl,
+  html body .nuevo-parte-mobile .max-w-7xl,
+  html body .mobile-content-wrapper .max-w-7xl,
+  html body div.min-h-screen > div.max-w-7xl,
+  html body div.nuevo-parte-mobile > div.max-w-7xl,
+  html body .min-h-screen .max-w-7xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Contenedores max-w-4xl - Línea 584 NuevoParte.jsx */
+  html body .nuevo-parte-mobile .max-w-4xl,
+  html body .nuevo-parte-mobile form .max-w-4xl,
+  html body .nuevo-parte-mobile > * .max-w-4xl,
+  html body div.nuevo-parte-mobile div.max-w-4xl,
+  html body form.nuevo-parte-mobile > div.max-w-4xl,
+  html body .min-h-screen .max-w-4xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* FORZAR TODOS los contenedores max-width a ocupar ancho completo */
+  html body .nuevo-parte-mobile .max-w-7xl,
+  html body .nuevo-parte-mobile .max-w-6xl,
+  html body .nuevo-parte-mobile .max-w-5xl,
+  html body .nuevo-parte-mobile .max-w-4xl,
+  html body .nuevo-parte-mobile .max-w-3xl,
+  html body .nuevo-parte-mobile .max-w-2xl,
+  html body .nuevo-parte-mobile .max-w-xl,
+  html body .nuevo-parte-mobile .max-w-lg,
+  html body .mobile-content-wrapper .max-w-7xl,
+  html body .mobile-content-wrapper .max-w-6xl,
+  html body .mobile-content-wrapper .max-w-5xl,
+  html body .mobile-content-wrapper .max-w-4xl,
+  html body .mobile-content-wrapper .max-w-3xl,
+  html body .mobile-content-wrapper .max-w-2xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Tarjetas principales bg-white - Ajustar al ancho completo */
+  html body .nuevo-parte-mobile.bg-white,
+  html body .bg-white.nuevo-parte-mobile,
+  html body .max-w-7xl > .bg-white,
+  html body .nuevo-parte-mobile > .bg-white,
+  html body div.max-w-7xl > div.bg-white {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* TODOS los inputs, selects y textareas */
+  .nuevo-parte-mobile input,
+  .nuevo-parte-mobile select,
+  .nuevo-parte-mobile textarea,
+  input[type="text"],
+  input[type="date"], 
+  input[type="number"],
+  select,
+  textarea {
+    height: 56px !important;
+    min-height: 56px !important;
+    font-size: 16px !important;
+    padding: 16px 12px !important;
+    border: 2px solid #d1d5db !important;
+    border-radius: 12px !important;
+    background-color: white !important;
+    line-height: 1.4 !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+  }
+
+  /* Textarea específica */
+  textarea {
+    height: auto !important;
+    min-height: 120px !important;
+    resize: vertical !important;
+    padding: 16px !important;
+  }
+
+  /* Todos los botones */
+  button {
+    min-height: 56px !important;
+    font-size: 16px !important;
+    padding: 16px 20px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+  }
+
+  /* Labels más visibles */
+  label {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+  }
+
+  /* Secciones/tarjetas bg-gray-50 - Padding optimizado y ancho completo */
+  html body .nuevo-parte-mobile .bg-gray-50,
+  html body .bg-gray-50.nuevo-parte-mobile,
+  html body .nuevo-parte-mobile > * > .bg-gray-50,
+  html body div.nuevo-parte-mobile div.bg-gray-50,
+  html body .max-w-4xl .bg-gray-50,
+  html body form .bg-gray-50,
+  html body form.nuevo-parte-mobile > .bg-gray-50,
+  html body .nuevo-parte-mobile form > .bg-gray-50 {
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* CAMPOS DE FORMULARIO - Padding interno reducido para aprovechar espacio */
+  html body .nuevo-parte-mobile .bg-gray-50 input,
+  html body .nuevo-parte-mobile .bg-gray-50 select,
+  html body .nuevo-parte-mobile .bg-gray-50 textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Títulos de sección */
+  h1, h2, h3 {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* Espaciado entre elementos - Reducido para móvil */
+  .nuevo-parte-mobile .space-y-4 > * + *,
+  .space-y-4.nuevo-parte-mobile > * + * {
+    margin-top: 12px !important;
+  }
+
+  .nuevo-parte-mobile .space-y-6 > * + *,
+  .space-y-6.nuevo-parte-mobile > * + * {
+    margin-top: 12px !important;
+  }
+
+  .nuevo-parte-mobile .space-y-8 > * + *,
+  .space-y-8.nuevo-parte-mobile > * + * {
+    margin-top: 16px !important;
+  }
+
+  /* Grid responsive */
+  .grid {
+    gap: 20px !important;
+  }
+
+  /* Padding del contenedor - Optimizado */
+  .nuevo-parte-mobile .px-6,
+  .px-6.nuevo-parte-mobile {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .nuevo-parte-mobile .px-4,
+  .px-4.nuevo-parte-mobile {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .nuevo-parte-mobile .py-4,
+  .py-4.nuevo-parte-mobile {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .nuevo-parte-mobile .p-6,
+  .p-6.nuevo-parte-mobile {
+    padding: 16px !important;
+  }
+
+  /* Form y contenedores internos - Sin padding lateral extra y ancho completo */
+  html body .nuevo-parte-mobile form,
+  html body form.nuevo-parte-mobile,
+  html body .nuevo-parte-mobile > * > form,
+  html body div.p-6 > form {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* FORZAR ancho completo en TODOS los divs dentro del formulario con clases space-y-* */
+  html body .nuevo-parte-mobile form .space-y-6,
+  html body .nuevo-parte-mobile form .space-y-8,
+  html body form.nuevo-parte-mobile > div,
+  html body .nuevo-parte-mobile form > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Botón principal de envío */
+  button[type="submit"] {
+    min-height: 64px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Contenedores específicos - Ya cubiertos arriba */
+
+  /* Ajustes específicos para campos problemáticos */
+  select option {
+    font-size: 16px !important;
+    padding: 8px !important;
+  }
+
+  /* Mejorar contraste y visibilidad */
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus {
+    outline: 3px solid rgba(59, 130, 246, 0.5) !important;
+    outline-offset: 2px !important;
+    border-color: #3b82f6 !important;
+  }
+
+  /* Asegurar que los elementos sean táctiles */
+  input,
+  select,
+  textarea,
+  button {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Ocultar elementos problemáticos en móvil */
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  /* Espaciado del header móvil - Padding lateral controlado */
+  .mobile-content-wrapper {
+    padding-top: 84px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-bottom: 16px !important;
+    min-height: calc(100vh - 84px) !important;
+  }
+
+  /* Ajustes para el contenido principal */
+  .min-h-screen {
+    padding-top: 84px !important;
+    padding-bottom: 20px !important;
+  }
+
+  /* Secciones con bordes - Ajustar al ancho completo */
+  .nuevo-parte-mobile .rounded-xl,
+  .rounded-xl.nuevo-parte-mobile {
+    border-radius: 12px !important;
+  }
+
+  .nuevo-parte-mobile .shadow-sm,
+  .shadow-sm.nuevo-parte-mobile {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* ========================================
+     FORZAR VISIBILIDAD DE IMAGEUPLOADER EN MÓVIL - MÁXIMA PRIORIDAD
+     ======================================== */
+
+  /* FORZAR con data-section="imagenes" - ESPECIFICIDAD MÁXIMA */
+  html body .nuevo-parte-mobile div[data-section="imagenes"],
+  html body .nuevo-parte-mobile [data-section="imagenes"],
+  html body div[data-section="imagenes"] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100px !important;
+    background-color: #f9fafb !important;
+  }
+
+  /* Forzar visibilidad de TODOS los hijos dentro de la sección de imágenes */
+  html body .nuevo-parte-mobile [data-section="imagenes"] *,
+  html body [data-section="imagenes"] * {
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Forzar visibilidad de TODOS los elementos relacionados con imágenes */
+  body .nuevo-parte-mobile .bg-gray-50,
+  body .nuevo-parte-mobile div.bg-gray-50,
+  body .nuevo-parte-mobile .w-full,
+  body .nuevo-parte-mobile div.w-full,
+  body .nuevo-parte-mobile .space-y-4,
+  body .nuevo-parte-mobile div.space-y-4 {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Contenedor principal con flex */
+  body .nuevo-parte-mobile .w-full.space-y-4,
+  body .nuevo-parte-mobile div.w-full.space-y-4 {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+  }
+
+  /* Indicador TOTAL IMÁGENES con máxima especificidad */
+  body .nuevo-parte-mobile .bg-green-600,
+  body .nuevo-parte-mobile .bg-red-600,
+  body .nuevo-parte-mobile div.bg-green-600,
+  body .nuevo-parte-mobile div.bg-red-600 {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    color: white !important;
+  }
+
+  /* Contenedor de lista bg-blue-50 */
+  body .nuevo-parte-mobile .bg-blue-50,
+  body .nuevo-parte-mobile div.bg-blue-50 {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    background-color: #eff6ff !important;
+  }
+
+  /* Grid de imágenes */
+  body .nuevo-parte-mobile .grid,
+  body .nuevo-parte-mobile div.grid {
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Imágenes img */
+  body .nuevo-parte-mobile img,
+  body .nuevo-parte-mobile .bg-blue-50 img,
+  body .nuevo-parte-mobile div img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Botones de upload con máxima especificidad */
+  body .nuevo-parte-mobile label[for="image-upload-camera"],
+  body .nuevo-parte-mobile label[for="image-upload-gallery"],
+  body .nuevo-parte-mobile label[for="image-upload-camera-unified"],
+  body .nuevo-parte-mobile label[for="image-upload-gallery-unified"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    background-color: #2563eb !important;
+    color: white !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+  }
+
+  body .nuevo-parte-mobile label[for="image-upload-gallery"],
+  body .nuevo-parte-mobile label[for="image-upload-gallery-unified"] {
+    background-color: #7c3aed !important;
+  }
+
+  /* Asegurar que el texto dentro de estos labels sea blanco */
+  body .nuevo-parte-mobile label[for="image-upload-camera"] span,
+  body .nuevo-parte-mobile label[for="image-upload-gallery"] span,
+  body .nuevo-parte-mobile label[for="image-upload-camera-unified"] span,
+  body .nuevo-parte-mobile label[for="image-upload-gallery-unified"] span {
+    color: white !important;
+  }
+
+  /* Indicador de imágenes - Mismo estilo que los botones */
+  body .nuevo-parte-mobile .image-uploader-unified > div:first-child {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    color: white !important;
+  }
+
+  /* Asegurar que todo el texto dentro del indicador sea blanco */
+  body .nuevo-parte-mobile .image-uploader-unified > div:first-child span {
+    color: white !important;
+  }
+
+  /* Iconos SVG dentro de los botones de imagen */
+  body .nuevo-parte-mobile label[for="image-upload-camera"] svg,
+  body .nuevo-parte-mobile label[for="image-upload-gallery"] svg,
+  body .nuevo-parte-mobile label[for="image-upload-camera-unified"] svg,
+  body .nuevo-parte-mobile label[for="image-upload-gallery-unified"] svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    flex-shrink: 0 !important;
+    color: white !important;
+    stroke: currentColor !important;
+  }
+
+  /* h2 y h3 */
+  body .nuevo-parte-mobile h2,
+  body .nuevo-parte-mobile h3 {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Botón eliminar */
+  body .nuevo-parte-mobile .bg-red-500,
+  body .nuevo-parte-mobile button.bg-red-500 {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background-color: #ef4444 !important;
+  }
+
+  /* ========================================
+     OPTIMIZACIONES DE UX PARA FORMULARIO - MÓVIL
+     ======================================== */
+
+  /* Tarjeta "Buscar materiales" - Reducir altura y padding */
+  .mobile-search-placeholder {
+    padding: 16px !important;
+    min-height: auto !important;
+  }
+
+  .mobile-search-placeholder svg {
+    width: 32px !important;
+    height: 32px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .mobile-search-placeholder .placeholder-title {
+    font-size: 16px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .mobile-search-placeholder .placeholder-hint {
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Botones "Iniciar Selección" y "Añadir" - Optimizados para móvil */
+  @media (max-width: 768px) {
+    /* Contenedor del selector de artículos */
+    .space-y-4 > div.text-center {
+      padding-top: 1rem !important;
+      padding-bottom: 1rem !important;
+    }
+
+    /* Icono principal del selector */
+    .text-center svg.mx-auto {
+      width: 3rem !important;
+      height: 3rem !important;
+    }
+
+    /* Títulos en selector */
+    .text-center h3 {
+      font-size: 1rem !important;
+      margin-bottom: 0.25rem !important;
+    }
+
+    .text-center p {
+      font-size: 0.875rem !important;
+      margin-bottom: 1rem !important;
+    }
+
+    /* Botones de acción principales */
+    button.bg-blue-600,
+    button.bg-orange-600 {
+      padding: 0.625rem 1.25rem !important;
+      font-size: 1rem !important;
+      border-radius: 0.5rem !important;
+      font-weight: 600 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.5rem !important;
+    }
+
+    /* SVG dentro de botones */
+    button svg {
+      flex-shrink: 0 !important;
+    }
+
+    /* Asegurar que texto e icono estén en la misma línea */
+    button span {
+      white-space: nowrap !important;
+    }
+
+    /* Botón de búsqueda manual en móvil */
+    .mobile-search-button {
+      width: 40px !important;
+      height: 40px !important;
+      background-color: #2563eb !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border: none !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      color: white !important;
+    }
+
+    .mobile-search-button:disabled {
+      background-color: #cbd5e1 !important;
+      cursor: not-allowed !important;
+      opacity: 0.5 !important;
+    }
+
+    .mobile-search-button.active {
+      background-color: #1d4ed8 !important;
+      transform: scale(1.05) !important;
+    }
+
+    .mobile-search-button:active:not(:disabled) {
+      transform: scale(0.95) !important;
+    }
+
+    .mobile-search-button svg {
+      width: 20px !important;
+      height: 20px !important;
+      stroke-width: 2.5 !important;
+    }
+  }
+}
+
+/* Animaciones para modales móviles */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+/* Estilos para Bottom Sheet de búsqueda */
+@media (max-width: 768px) {
+  /* Ocultar scroll del body cuando modal está abierto */
+  body.modal-open {
+    overflow: hidden;
+  }
+
+  /* Limitar líneas de texto en resultados */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Forzar aplicación en todos los dispositivos móviles */
+@media screen and (max-device-width: 768px) {
+  .nuevo-parte-mobile input,
+  .nuevo-parte-mobile select,
+  .nuevo-parte-mobile textarea {
+    font-size: 16px !important;
+    height: 56px !important;
+    padding: 16px 12px !important;
+  }
+}

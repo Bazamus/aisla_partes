@@ -1,0 +1,1313 @@
+/* Optimizaciones específicas para campos críticos en móvil - AISLA PARTES */
+
+/* ========================================
+   BARRA DE BÚSQUEDA DE MATERIALES - MÁXIMA PRIORIDAD
+   ======================================== */
+
+@media screen and (max-width: 768px) {
+  
+  /* Contenedor principal de búsqueda - DISEÑO VISUAL MEJORADO */
+  .mobile-search-container {
+    position: relative !important;
+    width: 100% !important;
+    margin-bottom: 24px !important;
+    padding: 4px !important; /* Espacio para efecto visual */
+  }
+
+  /* Efecto visual de fondo para el contenedor */
+  .mobile-search-container::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+    border-radius: 24px !important;
+    z-index: -1 !important;
+    opacity: 0.5 !important;
+  }
+
+  /* Input de búsqueda principal - LAYOUT LIMPIO OPTIMIZADO */
+  .mobile-search-input {
+    height: 72px !important;
+    min-height: 72px !important;
+    font-size: 20px !important;
+    padding: 24px 70px 24px 24px !important; /* Reducido padding-right para solo botón voz */
+    border: 3px solid #e2e8f0 !important;
+    border-radius: 20px !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    line-height: 1.2 !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.025em !important;
+  }
+
+  /* Estado de foco mejorado con mejor feedback visual */
+  .mobile-search-input:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.15), 0 12px 35px rgba(0, 0, 0, 0.15) !important;
+    outline: none !important;
+    transform: scale(1.025) !important;
+    background-color: #fefefe !important;
+  }
+
+  /* Placeholder más claro y legible - OPTIMIZADO */
+  .mobile-search-input::placeholder {
+    color: #475569 !important; /* Más contraste */
+    font-size: 18px !important;
+    font-weight: 600 !important; /* Más bold */
+    opacity: 1 !important;
+    letter-spacing: 0.025em !important;
+  }
+
+  /* Input con mejor definición visual */
+  .mobile-search-input {
+    position: relative !important;
+    border: 3px solid #cbd5e1 !important; /* Borde más visible */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Contenedor de controles - SOLO BOTÓN DE VOZ */
+  .mobile-search-controls {
+    position: absolute !important;
+    top: 50% !important;
+    right: 10px !important; /* Menos espacio desde el borde */
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+  }
+
+  /* Botón de reconocimiento de voz - OPTIMIZADO PARA ACCESIBILIDAD */
+  .mobile-voice-button {
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  .mobile-voice-button:not(.active) {
+    background: linear-gradient(135deg, #047857 0%, #065f46 100%) !important; /* Verde más oscuro para mejor contraste */
+    color: white !important;
+    border: 3px solid rgba(255, 255, 255, 0.4) !important; /* Borde más visible */
+    box-shadow: 0 6px 20px rgba(4, 120, 87, 0.4), 0 3px 6px rgba(0, 0, 0, 0.15) !important; /* Sombra más pronunciada */
+  }
+
+  .mobile-voice-button.active {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important; /* Rojo más oscuro para mejor contraste */
+    color: white !important;
+    border: 3px solid rgba(255, 255, 255, 0.5) !important; /* Borde más visible */
+    animation: pulse-voice 1.2s infinite !important;
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.6), 0 4px 8px rgba(0, 0, 0, 0.2) !important; /* Sombra más intensa */
+  }
+
+  .mobile-voice-button:hover {
+    transform: scale(1.08) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .mobile-voice-button:active {
+    transform: scale(0.92) !important;
+    transition: all 0.1s ease !important;
+  }
+
+  /* SVG del botón de voz - REDISEÑADO PARA MÁXIMA VISIBILIDAD */
+  .mobile-voice-button svg {
+    width: 28px !important;
+    height: 28px !important;
+    stroke-width: 4 !important; /* Más grueso para mejor contraste */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3)) !important; /* Sombra + glow blanco */
+    stroke: #ffffff !important; /* Blanco puro para máximo contraste */
+    fill: none !important;
+    transition: all 0.3s ease !important;
+  }
+
+  /* Efecto hover mejorado para el icono */
+  .mobile-voice-button:hover svg {
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.5)) !important;
+    transform: scale(1.05) !important;
+  }
+
+  /* Efecto activo para el icono */
+  .mobile-voice-button.active svg {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)) !important;
+    animation: pulse-icon 1.2s infinite !important;
+  }
+
+  /* Animación para reconocimiento de voz activo */
+  @keyframes pulse-voice {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+  }
+
+  /* Animación para el icono cuando está activo */
+  @keyframes pulse-icon {
+    0%, 100% {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)) !important;
+    }
+    50% {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)) !important;
+    }
+  }
+
+  /* Regla duplicada eliminada - ya definida arriba */
+
+  /* Botón de búsqueda - COMPLETAMENTE OCULTO EN MÓVIL */
+  .mobile-search-icon {
+    display: none !important;
+  }
+
+  .mobile-search-icon svg {
+    display: none !important;
+  }
+
+  /* Indicador de carga */
+  .mobile-search-loading {
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .mobile-search-loading .animate-spin {
+    width: 20px !important;
+    height: 20px !important;
+    border-width: 3px !important;
+  }
+
+  /* Sugerencias rápidas mejoradas */
+  .mobile-search-suggestions {
+    margin-top: 12px !important;
+    padding: 16px !important;
+    background: #f8fafc !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .mobile-search-suggestions .suggestion-label {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .mobile-suggestion-chip {
+    display: inline-block !important;
+    padding: 8px 16px !important;
+    margin: 4px 8px 4px 0 !important;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+    color: white !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
+    border: none !important;
+  }
+
+  .mobile-suggestion-chip:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4) !important;
+  }
+
+  .mobile-suggestion-chip:active {
+    transform: translateY(0) !important;
+  }
+
+  /* Indicador de reconocimiento de voz activo */
+  .mobile-voice-indicator {
+    margin-top: 12px !important;
+    padding: 16px !important;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+    border: 2px solid #fecaca !important;
+    border-radius: 12px !important;
+    animation: pulse-gentle 2s infinite !important;
+  }
+
+  @keyframes pulse-gentle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  .mobile-voice-indicator .voice-status {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .mobile-voice-indicator .voice-dot {
+    width: 12px !important;
+    height: 12px !important;
+    background: #ef4444 !important;
+    border-radius: 50% !important;
+    animation: pulse-dot 1s infinite !important;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+
+  .mobile-voice-indicator .voice-text {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #dc2626 !important;
+  }
+
+  .mobile-voice-indicator .voice-hint {
+    font-size: 14px !important;
+    color: #991b1b !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Resultados de búsqueda optimizados para móvil - MEJORADO */
+  .mobile-search-results {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    margin-top: 12px !important;
+    background: white !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    max-height: 75vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  .mobile-search-results .results-header {
+    padding: 18px 20px !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    border-radius: 18px 18px 0 0 !important;
+  }
+
+  .mobile-search-results .results-count {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    letter-spacing: 0.025em !important;
+  }
+
+  .mobile-search-results .result-item {
+    padding: 24px !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    touch-action: manipulation !important;
+    position: relative !important;
+    background: white !important;
+  }
+
+  .mobile-search-results .result-item:hover,
+  .mobile-search-results .result-item:focus {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    transform: translateX(6px) scale(1.02) !important;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .mobile-search-results .result-item:active {
+    background: #dbeafe !important;
+    transform: scale(0.98) !important;
+  }
+
+  .mobile-search-results .result-code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #1e40af !important;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    padding: 8px 12px !important;
+    border-radius: 12px !important;
+    margin-bottom: 12px !important;
+    display: inline-block !important;
+    border: 2px solid #bfdbfe !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  .mobile-search-results .result-badge {
+    display: inline-block !important;
+    padding: 6px 14px !important;
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%) !important;
+    color: #166534 !important;
+    border: 1px solid #bbf7d0 !important;
+    border-radius: 16px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    margin-left: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  .mobile-search-results .result-details {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+    margin: 16px 0 !important;
+    padding: 12px !important;
+    background: #f8fafc !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .mobile-search-results .result-detail {
+    font-size: 15px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+
+  .mobile-search-results .result-detail-label {
+    color: #64748b !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  .mobile-search-results .result-detail-value {
+    color: #1e293b !important;
+    font-weight: 700 !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+  }
+
+  .mobile-search-results .result-description {
+    font-size: 15px !important;
+    color: #475569 !important;
+    line-height: 1.6 !important;
+    margin: 16px 0 !important;
+    padding: 12px !important;
+    background: #f1f5f9 !important;
+    border-radius: 10px !important;
+    border-left: 4px solid #3b82f6 !important;
+  }
+
+  .mobile-search-results .result-prices {
+    display: flex !important;
+    gap: 8px !important;
+    margin: 12px 0 !important;
+  }
+
+  .mobile-search-results .price-badge {
+    padding: 6px 12px !important;
+    border-radius: 16px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+  }
+
+  .mobile-search-results .price-badge.aislamiento {
+    background: #dcfce7 !important;
+    color: #166534 !important;
+  }
+
+  .mobile-search-results .price-badge.aluminio {
+    background: #dbeafe !important;
+    color: #1e40af !important;
+  }
+
+  .mobile-search-results .result-action {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-top: 12px !important;
+  }
+
+  .mobile-search-results .result-action svg {
+    width: 20px !important;
+    height: 20px !important;
+    color: #3b82f6 !important;
+  }
+
+  /* Estado vacío mejorado - SIN RESULTADOS */
+  .mobile-search-empty {
+    padding: 50px 24px !important;
+    text-align: center !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    border-radius: 16px !important;
+    margin: 16px !important;
+    border: 2px dashed #cbd5e1 !important;
+  }
+
+  .mobile-search-empty svg {
+    width: 56px !important;
+    height: 56px !important;
+    color: #94a3b8 !important;
+    margin: 0 auto 20px !important;
+    display: block !important;
+    opacity: 0.8 !important;
+  }
+
+  .mobile-search-empty .empty-title {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #374151 !important;
+    margin-bottom: 10px !important;
+    letter-spacing: 0.025em !important;
+  }
+
+  .mobile-search-empty .empty-hint {
+    font-size: 15px !important;
+    color: #64748b !important;
+    line-height: 1.5 !important;
+    max-width: 280px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Estado placeholder inicial - OPTIMIZADO */
+  .mobile-search-placeholder {
+    padding: 60px 24px !important;
+    text-align: center !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%) !important;
+    border-radius: 20px !important;
+    margin-top: 20px !important;
+    border: 3px solid #e2e8f0 !important;
+    position: relative !important;
+  }
+
+  .mobile-search-placeholder svg {
+    width: 80px !important;
+    height: 80px !important;
+    color: #3b82f6 !important;
+    margin: 0 auto 24px !important;
+    display: block !important;
+    opacity: 0.6 !important;
+    filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.1)) !important;
+  }
+
+  .mobile-search-placeholder .placeholder-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #1e40af !important;
+    margin-bottom: 12px !important;
+    letter-spacing: 0.025em !important;
+  }
+
+  .mobile-search-placeholder .placeholder-hint {
+    font-size: 16px !important;
+    color: #64748b !important;
+    line-height: 1.6 !important;
+    max-width: 300px !important;
+    margin: 0 auto !important;
+    font-weight: 500 !important;
+  }
+
+  /* ========================================
+     CAMPO NOMBRE DE LA OBRA - OPTIMIZADO
+     ======================================== */
+
+  .mobile-obra-field {
+    position: relative !important;
+    width: 100% !important;
+  }
+
+  .mobile-obra-select {
+    height: 64px !important;
+    min-height: 64px !important;
+    font-size: 18px !important;
+    padding: 20px 50px 20px 20px !important;
+    border: 3px solid #d1d5db !important;
+    border-radius: 16px !important;
+    background-color: #ffffff !important;
+    line-height: 1.4 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    touch-action: manipulation !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 16px center !important;
+    background-repeat: no-repeat !important;
+    background-size: 20px !important;
+  }
+
+  .mobile-obra-select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    outline: none !important;
+  }
+
+  .mobile-obra-select option {
+    font-size: 16px !important;
+    padding: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Bloque informativo de obra bloqueada mejorado - SOLO MÓVIL */
+  .mobile-obra-blocked {
+    margin-top: 16px !important;
+    padding: 20px !important;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    border: 2px solid #93c5fd !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1) !important;
+  }
+
+  .mobile-obra-blocked .blocked-header {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .mobile-obra-blocked .blocked-icon {
+    width: 24px !important;
+    height: 24px !important;
+    color: #1d4ed8 !important;
+    margin-top: 2px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-obra-blocked .blocked-content {
+    flex: 1 !important;
+  }
+
+  .mobile-obra-blocked .blocked-title {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #1e40af !important;
+    margin-bottom: 8px !important;
+    line-height: 1.3 !important;
+  }
+
+  .mobile-obra-blocked .blocked-text {
+    font-size: 14px !important;
+    color: #1e40af !important;
+    line-height: 1.5 !important;
+  }
+
+  /* ========================================
+     CAMPO ESTADO DEL PARTE - OPTIMIZADO
+     ======================================== */
+
+  .mobile-estado-field {
+    position: relative !important;
+    width: 100% !important;
+  }
+
+  .mobile-estado-select {
+    height: 64px !important;
+    min-height: 64px !important;
+    font-size: 18px !important;
+    padding: 20px 50px 20px 20px !important;
+    border: 3px solid #d1d5db !important;
+    border-radius: 16px !important;
+    background-color: #ffffff !important;
+    line-height: 1.4 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    touch-action: manipulation !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 16px center !important;
+    background-repeat: no-repeat !important;
+    background-size: 20px !important;
+  }
+
+  .mobile-estado-select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    outline: none !important;
+  }
+
+  .mobile-estado-select option {
+    font-size: 16px !important;
+    padding: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Estado visual mejorado */
+  .mobile-estado-display {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 20px !important;
+    border-radius: 16px !important;
+    border: 3px solid !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .mobile-estado-display.borrador {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+    border-color: #9ca3af !important;
+    color: #374151 !important;
+  }
+
+  .mobile-estado-display.pendiente {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    border-color: #f59e0b !important;
+    color: #92400e !important;
+  }
+
+  .mobile-estado-display.aprobado {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%) !important;
+    border-color: #10b981 !important;
+    color: #065f46 !important;
+  }
+
+  .mobile-estado-display.rechazado {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+    border-color: #ef4444 !important;
+    color: #991b1b !important;
+  }
+
+  .mobile-estado-description {
+    margin-top: 12px !important;
+    padding: 16px !important;
+    background: #f8fafc !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .mobile-estado-description p {
+    font-size: 14px !important;
+    color: #4b5563 !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+  }
+
+  /* ========================================
+     MEJORAS GENERALES PARA MÓVIL
+     ======================================== */
+
+  /* Labels más visibles */
+  .mobile-field-label {
+    display: block !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 12px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Espaciado mejorado entre campos */
+  .mobile-form-group {
+    margin-bottom: 24px !important;
+  }
+
+  /* Contenedor principal optimizado */
+  .mobile-form-container {
+    padding: 20px !important;
+    max-width: 100% !important;
+  }
+
+  /* Mejorar contraste en elementos interactivos */
+  .mobile-interactive:focus {
+    outline: 3px solid rgba(59, 130, 246, 0.5) !important;
+    outline-offset: 3px !important;
+  }
+
+  /* Animaciones suaves */
+  .mobile-smooth-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Mejorar accesibilidad táctil */
+  .mobile-touch-target {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Scroll suave en resultados */
+  .mobile-scroll-smooth {
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+  }
+
+  /* Ocultar scrollbars en móvil */
+  .mobile-hide-scrollbar {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
+  .mobile-hide-scrollbar::-webkit-scrollbar {
+    display: none !important;
+  }
+}
+
+/* ========================================
+   OPTIMIZACIONES PARA ESCRITORIO
+   ======================================== */
+
+/* Ocultar placeholder en desktop */
+@media screen and (min-width: 769px) {
+  .mobile-search-placeholder {
+    display: none !important;
+  }
+  
+  /* Estilos para el estado vacío en desktop */
+  .search-state-empty {
+    background-image: none !important;
+    padding-left: 16px !important;
+  }
+  
+  /* Asegurar que el input sea visible y funcional */
+  .mobile-search-input {
+    height: 48px !important;
+    min-height: 48px !important;
+    font-size: 16px !important;
+    padding: 12px 16px !important; /* Padding simétrico sin espacio para iconos */
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .mobile-search-input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+    transform: none !important;
+  }
+
+  /* SOLUCIÓN RADICAL: Eliminar completamente el icono de lupa en desktop */
+  .mobile-search-icon {
+    display: none !important;
+  }
+
+  /* Reorganizar los controles completamente */
+  .mobile-search-controls {
+    position: relative !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    background: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+  }
+
+  /* ========================================
+     REDISEÑO COMPLETO PARA DESKTOP
+     ======================================== */
+
+  /* Contenedor principal - diseño limpio para desktop - ANCHO COMPLETO */
+  .mobile-search-container {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    position: relative !important;
+    width: 100% !important; /* Asegurar ancho completo */
+  }
+
+  /* Layout de input y controles en desktop - ANCHO COMPLETO */
+  .mobile-search-container > div:first-child {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+    width: 100% !important; /* Asegurar ancho completo */
+  }
+
+  /* Área de input reorganizada - ANCHO COMPLETO */
+  .mobile-search-input {
+    flex: 1 !important;
+    width: 100% !important; /* Ocupa todo el ancho disponible */
+    margin: 0 !important;
+    border-radius: 8px !important;
+  }
+
+  /* Los controles ya están definidos arriba - evitar conflicto */
+
+  .mobile-voice-button {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 6px !important;
+    background: #f3f4f6 !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    color: #6b7280 !important;
+  }
+
+  .mobile-voice-button:hover {
+    background: #e5e7eb !important;
+    border-color: #9ca3af !important;
+    color: #4b5563 !important;
+  }
+
+  .mobile-voice-button.active {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: white !important;
+  }
+
+  /* Sugerencias rápidas - estilo desktop */
+  .mobile-search-suggestions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+    padding: 0 !important;
+  }
+
+  .mobile-suggestion-chip {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    color: #374151 !important;
+    padding: 6px 12px !important;
+    border-radius: 16px !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .mobile-suggestion-chip:hover {
+    background: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+    transform: none !important;
+  }
+
+  /* Contenedor de resultados - diseño profesional */
+  .mobile-search-results {
+    background: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    max-height: 500px !important;
+    overflow-y: auto !important;
+    padding: 0 !important;
+  }
+
+  /* Header de resultados */
+  .results-header {
+    background: #f9fafb !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 12px 16px !important;
+    margin: 0 !important;
+  }
+
+  .results-count {
+    color: #6b7280 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+  }
+
+  /* Items de resultado - layout grid para desktop */
+  .result-item {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+    padding: 16px !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    background: white !important;
+    color: inherit !important;
+    transition: background-color 0.2s ease !important;
+    cursor: pointer !important;
+  }
+
+  .result-item:hover {
+    background: #f8fafc !important;
+    transform: none !important;
+  }
+
+  .result-item:last-child {
+    border-bottom: none !important;
+  }
+
+  /* Código del artículo */
+  .result-code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+    background: #f3f4f6 !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    display: inline-block !important;
+  }
+
+  /* Badge de relevancia */
+  .result-badge {
+    background: #dcfce7 !important;
+    color: #166534 !important;
+    border: 1px solid #bbf7d0 !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+  }
+
+  /* Detalles técnicos - layout horizontal */
+  .result-details {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+    margin: 8px 0 !important;
+  }
+
+  .result-detail {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .result-detail-label {
+    color: #6b7280 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  .result-detail-value {
+    color: #374151 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+  }
+
+  /* Descripción */
+  .result-description {
+    color: #6b7280 !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    margin: 8px 0 !important;
+  }
+
+  /* Badges de precio - estilo desktop */
+  .result-prices {
+    display: flex !important;
+    gap: 6px !important;
+  }
+
+  .price-badge {
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  .price-badge.aislamiento {
+    background: #dbeafe !important;
+    color: #1e40af !important;
+    border: 1px solid #bfdbfe !important;
+  }
+
+  .price-badge.aluminio {
+    background: #f3f4f6 !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db !important;
+  }
+
+  /* Icono de acción */
+  .result-action {
+    width: 20px !important;
+    height: 20px !important;
+    color: #9ca3af !important;
+  }
+
+  /* Estado vacío - versión desktop */
+  .mobile-search-empty {
+    text-align: center !important;
+    padding: 40px 20px !important;
+    color: #6b7280 !important;
+  }
+
+  .empty-title {
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    color: #374151 !important;
+    margin: 0 0 8px 0 !important;
+  }
+
+  .empty-hint {
+    font-size: 14px !important;
+    color: #6b7280 !important;
+    margin: 0 !important;
+  }
+
+  /* Indicador de voz - versión desktop */
+  .mobile-voice-indicator {
+    background: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .voice-status {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .voice-dot {
+    width: 8px !important;
+    height: 8px !important;
+    background: #dc2626 !important;
+    border-radius: 50% !important;
+    animation: pulse 1.5s ease-in-out infinite !important;
+  }
+
+  .voice-text {
+    color: #dc2626 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+  }
+
+  .voice-hint {
+    color: #991b1b !important;
+    font-size: 12px !important;
+    margin: 0 !important;
+  }
+
+  /* Scrollbar personalizado para desktop */
+  .mobile-search-results::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .mobile-search-results::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+
+  .mobile-search-results::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  .mobile-search-results::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+/* ========================================
+   OPTIMIZACIONES PARA PANTALLAS MUY PEQUEÑAS
+   ======================================== */
+
+@media screen and (max-width: 480px) {
+  
+  .mobile-search-input {
+    height: 56px !important;
+    font-size: 16px !important;
+    padding: 16px 70px 16px 16px !important;
+  }
+
+  .mobile-voice-button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .mobile-obra-select,
+  .mobile-estado-select {
+    height: 56px !important;
+    font-size: 16px !important;
+    padding: 16px 45px 16px 16px !important;
+  }
+
+  .mobile-field-label {
+    font-size: 15px !important;
+  }
+
+  .mobile-form-container {
+    padding: 16px !important;
+  }
+}
+
+/* ========================================
+   OPTIMIZACIONES PARA ORIENTACIÓN LANDSCAPE
+   ======================================== */
+
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  
+  .mobile-search-results {
+    max-height: 50vh !important;
+  }
+
+  .mobile-search-input {
+    height: 56px !important;
+    font-size: 16px !important;
+  }
+
+  .mobile-voice-button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+
+/* ========================================
+   ESTILOS PARA DESKTOP - AVISO DISCRETO
+   ======================================== */
+
+@media screen and (min-width: 769px) {
+  
+  /* Bloque informativo de obra bloqueada - VERSIÓN DESKTOP DISCRETA */
+  .mobile-obra-blocked {
+    margin-top: 12px !important;
+    padding: 12px 16px !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #3b82f6 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-obra-blocked .blocked-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .mobile-obra-blocked .blocked-icon {
+    width: 16px !important;
+    height: 16px !important;
+    color: #3b82f6 !important;
+    margin-top: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-obra-blocked .blocked-content {
+    flex: 1 !important;
+  }
+
+  .mobile-obra-blocked .blocked-title {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #1e40af !important;
+    margin-bottom: 4px !important;
+    line-height: 1.4 !important;
+  }
+
+  .mobile-obra-blocked .blocked-text {
+    font-size: 13px !important;
+    color: #475569 !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+  }
+
+  /* Versión compacta para desktop - una sola línea */
+  .mobile-obra-blocked.desktop-compact {
+    padding: 8px 12px !important;
+    margin-top: 8px !important;
+  }
+
+  .mobile-obra-blocked.desktop-compact .blocked-header {
+    margin-bottom: 0 !important;
+  }
+
+  .mobile-obra-blocked.desktop-compact .blocked-title {
+    margin-bottom: 0 !important;
+    font-size: 13px !important;
+  }
+
+  .mobile-obra-blocked.desktop-compact .blocked-text {
+    display: none !important;
+  }
+
+  /* Versión inline para desktop - aún más discreta */
+  .mobile-obra-blocked.desktop-inline {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 6px 10px !important;
+    margin-top: 8px !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-left: 3px solid #3b82f6 !important;
+    border-radius: 6px !important;
+  }
+
+  .mobile-obra-blocked.desktop-inline .blocked-header {
+    margin-bottom: 0 !important;
+    gap: 6px !important;
+  }
+
+  .mobile-obra-blocked.desktop-inline .blocked-icon {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .mobile-obra-blocked.desktop-inline .blocked-title {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    margin-bottom: 0 !important;
+    color: #334155 !important;
+  }
+
+  .mobile-obra-blocked.desktop-inline .blocked-text {
+    display: none !important;
+  }
+
+  /* Estado vacío - Icono más pequeño en desktop */
+  .mobile-search-empty svg {
+    width: 24px !important;
+    height: 24px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .mobile-search-empty {
+    padding: 20px !important;
+  }
+
+  .mobile-search-empty .empty-title {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .mobile-search-empty .empty-hint {
+    font-size: 12px !important;
+  }
+
+  /* Estado placeholder - Ocultar completamente en desktop */
+  .mobile-search-placeholder {
+    display: none !important;
+  }
+
+  /* Asegurar funcionamiento normal del componente en desktop */
+  .mobile-search-container {
+    min-height: 0 !important;
+  }
+}

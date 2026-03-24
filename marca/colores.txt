@@ -1,0 +1,5 @@
+Blanco: #ffffff
+Azul principal: #0d9488
+Negro: #0f0f11
+Gris: #828282
+Azul secundario: #004fd7

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificar Clave de Servicio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .loading {
+      background-color: #cce5ff;
+      color: #004085;
+      border: 1px solid #b8daff;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Verificador de Clave de Servicio de Supabase</h1>
+  <p>Esta herramienta verifica si la clave de servicio (service_role) configurada en el archivo .env es correcta y tiene los permisos necesarios.</p>
+  
+  <button id="checkButton">Verificar Clave de Servicio</button>
+  
+  <div id="result" class="result" style="display: none;"></div>
+  
+  <h2>Instrucciones</h2>
+  <ol>
+    <li>Asegúrate de que el servidor de desarrollo esté en ejecución</li>
+    <li>Verifica que el archivo .env contenga la variable VITE_SUPABASE_SERVICE_KEY con la clave correcta</li>
+    <li>Haz clic en el botón "Verificar Clave de Servicio"</li>
+  </ol>
+
+  <script type="module">
+    import { supabase, supabaseAdmin } from '../lib/supabase.js';
+    
+    document.getElementById('checkButton').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.className = 'result loading';
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>Verificando clave de servicio...</p>';
+      
+      try {
+        // Verificar que supabaseAdmin existe
+        if (!supabaseAdmin) {
+          throw new Error('El cliente supabaseAdmin no está disponible. Verifica la configuración en lib/supabase.js');
+        }
+        
+        // Intentar listar usuarios (operación que requiere clave de servicio)
+        const { data, error } = await supabaseAdmin.auth.admin.listUsers();
+        
+        if (error) {
+          if (error.status === 403) {
+            throw new Error(`Error de permisos (403 Forbidden). La clave de servicio no es válida o no tiene permisos suficientes. Detalles: ${error.message}`);
+          } else {
+            throw new Error(`Error al listar usuarios: ${error.message}`);
+          }
+        }
+        
+        // Mostrar resultado exitoso
+        resultDiv.className = 'result success';
+        resultDiv.innerHTML = `
+          <h3>✅ Verificación exitosa</h3>
+          <p>La clave de servicio está configurada correctamente y tiene los permisos necesarios.</p>
+          <p>Se encontraron ${data.users.length} usuarios en el sistema.</p>
+          <h4>Primeros 3 usuarios:</h4>
+          <pre>${JSON.stringify(data.users.slice(0, 3).map(u => ({ id: u.id, email: u.email })), null, 2)}</pre>
+        `;
+      } catch (error) {
+        // Mostrar error
+        resultDiv.className = 'result error';
+        resultDiv.innerHTML = `
+          <h3>❌ Error en la verificación</h3>
+          <p>${error.message}</p>
+          <h4>Solución:</h4>
+          <ol>
+            <li>Verifica que la clave de servicio en el archivo .env sea correcta</li>
+            <li>Asegúrate de que sea la clave "service_role" y no la clave "anon"</li>
+            <li>Reinicia el servidor de desarrollo después de modificar el archivo .env</li>
+          </ol>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

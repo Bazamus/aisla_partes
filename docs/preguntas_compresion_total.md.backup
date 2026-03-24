@@ -1,0 +1,71 @@
+**Objetivo del proyecto:**  
+Diseña y desarrolla una aplicación inteligente para la planificación optimizada de listas de compra. La aplicación debe aprovechar inteligencia artificial para analizar hábitos de compra, preferencias del usuario y restricciones de presupuesto, generando recomendaciones personalizadas y eficientes. Debe integrarse con una base de datos de productos actualizada, permitir la categorización automática de artículos, ofrecer sugerencias inteligentes basadas en patrones de consumo y proporcionar funciones interactivas que mejoren la experiencia del usuario, como historial de compras, comparación de precios y notificaciones sobre descuentos o productos recurrentes.
+
+---
+
+### **Instrucciones para el Asistente de Código**  
+
+#### **1️⃣ Estructura del Proyecto**  
+- Utilizar un framework adecuado para el desarrollo web o móvil, como **React.js, Vue.js o Flutter para frontend** y **Node.js con Express, FastAPI o Django para backend**.  
+- Seguir principios **SOLID** y arquitectura **MVC** para mantener un código limpio y escalable.  
+- La aplicación será **para un solo usuario**, por lo que **no se requiere autenticación**.  
+
+---
+
+#### **2️⃣ Base de Datos**  
+- Implementar una base de datos estructurada con los siguientes campos para cada producto en base a las columnas contenidas en archivo "datos_articulo"
+-La base de datos se creará en SupaBase  
+
+---
+
+#### **3️⃣ Funcionalidades Clave**  
+
+🔹 **Creación y Gestión de Listas de Compra:**  
+- Los usuarios pueden **seleccionar productos** desde la base de datos.  
+- Generación automática de **listas en base a**:  
+  - **Número de personas** (Ej: lista de compras para 2 personas por 1 semana).  
+  - **Periodo de tiempo** (días, semanas, meses).  
+  - **Presupuesto** (semanal, mensual o anual).  
+- Generación automática de **menús** basada en ingredientes disponibles y cantidades seleccionadas.  
+- **Edición manual** de listas para modificar cantidades o añadir productos personalizados.  
+- **Almacenamiento de listas recurrentes** para facilitar futuras compras.  
+
+🔹 **Recomendaciones Inteligentes con IA con ayuda de la API de OpenAi:**  
+- La IA generará automáticamente listas de la compra y menús según los **requerimientos del usuario**.  
+- Sugerencias automáticas basadas en **compras previas** y preferencias.  
+- Opcional: Implementar recomendaciones avanzadas con **filtrado colaborativo** o modelos de **Machine Learning**.  
+
+🔹 **Búsqueda y Filtrado:**  
+- **Búsqueda rápida** por nombre o precio.  
+- Filtros por **precio, nombre** para encontrar productos fácilmente.  
+
+🔹 **Exportación y Compartición:**  
+- Opción para **exportar la lista de la compra** en **PDF** o **Excel**.  
+- Posibilidad de **compartir la lista** mediante un enlace generado automáticamente.  
+
+---
+
+#### **4️⃣ Tecnologías Sugeridas**  
+- **Frontend:** React.js, Vue.js o Flutter  
+- **Backend:** Node.js con Express, Django o FastAPI  
+- **Base de Datos:** PostgreSQL, MongoDB o SQLite  
+- **Extras:**  
+  - **TailwindCSS** o **Material UI** para UI.  
+  - **Algoritmos de IA** para generación automática de listas y recomendaciones.  
+
+---
+
+#### **5️⃣ Despliegue y Hosting**  
+- **Backend:** Vercel.  
+- **Base de datos:**  Supabase.  
+- **Frontend:** Vercel.  
+
+---
+
+📌 **Salida esperada:**  
+Código **limpio y bien documentado**, con README explicativo, instrucciones de instalación y despliegue, ejemplos de uso y estructura modular para fácil mantenimiento. 
+Para el desarrollo guíate po las indicaciones contenidas en el archivo "INSTRUCIONES_PROYECTO.txt" 
+
+---
+
+ 🚀 **Si necesitas instrucciones adicionales, dime y lo perfeccionamos aún más.** 😊

@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50;
+  }
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  --totl-primary-background: transparent;
+  --totl-primary-font-color: inherit;
+  --totl-primate-font-descolor: inherit;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  /* display: flex; */ /* Eliminado para permitir el flujo normal */
+  /* place-items: center; */ /* Eliminado para evitar centrado forzado */
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: transparent; /* Cambiado de #1a1a1a a transparent */
+  cursor: pointer;
+  transition: border-color 0.25s, background-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@layer components {
+  .container-desktop {
+    @apply w-full mx-auto px-4;
+    max-width: 1280px; /* Ancho máximo para escritorio */
+  }
+}
+
+@media (max-width: 768px) {
+  .container-desktop {
+    @apply px-2;
+    max-width: 100%;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: transparent; /* Cambiado de #f9f9f9 a transparent */
+  }
+}
+
+/* Estilos específicos para filtros móviles */
+@media (max-width: 768px) {
+  /* Asegurar que los selects móviles muestren el texto completo */
+  .mobile-filter-select {
+    height: 56px !important;
+    padding: 12px 40px 12px 12px !important;
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+  }
+  
+  /* Input de búsqueda móvil */
+  .mobile-search-input {
+    height: 56px !important;
+    padding: 12px 16px 12px 56px !important;
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Prevenir zoom en iOS cuando se enfoca un input */
+  input[type="search"], 
+  input[type="text"], 
+  input[type="date"], 
+  select {
+    font-size: 16px !important;
+  }
+}

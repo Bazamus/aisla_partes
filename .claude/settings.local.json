@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git log:*)",
+      "Bash(node --version:*)",
+      "Bash(npm:*)",
+      "Bash(xargs -I {} bash -c 'echo \"\"=== {} ===\"\" && ls {} 2>/dev/null | wc -l')",
+      "Bash(wc:*)",
+      "Bash(ls:*)",
+      "Bash(find src -type d -exec bash -c 'dir_path=\"\"$1\"\"; file_count=$\\(find \"\"$dir_path\"\" -maxdepth 1 -type f | wc -l\\); echo \"\"$dir_path: $file_count archivos\"\"' _ {} ;)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Read(//c/Users/david-rey/.claude/projects/c--Users-david-rey-Desktop-DAVID-CODE-AISLA-PARTES/**)",
+      "Bash(find:*)",
+      "Bash(python3:*)",
+      "Bash(git status:*)",
+      "Bash(py --version)",
+      "Bash(where python3:*)",
+      "Bash(where python:*)",
+      "Bash(python -c \":*)",
+      "Bash(python \"C:\\\\Users\\\\David_PC\\\\Desktop\\\\DAVID_CODE\\\\generate_sql.py\")",
+      "Bash(python \"C:\\\\Users\\\\David_PC\\\\Desktop\\\\DAVID_CODE\\\\create_demo.py\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-url",
+        "https://jhfyxgzsandolhbufvrb.supabase.co",
+        "--access-token",
+        "sbp_05d219849b7da559b3deac8ee0b0737c2859d7f7"
+      ]
+    },
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "ctx7sk-1ef093e5-2206-446c-a4bd-55fed94fc5f9"
+      }
+    }
+  }
+} 
