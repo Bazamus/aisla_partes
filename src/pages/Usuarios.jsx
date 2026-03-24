@@ -178,39 +178,37 @@ function Usuarios({ initialTab = 'activos' }) {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900">Gestión de Usuarios</h1>
+    <div className="space-y-4">
+      <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
 
       {/* Navegación de Pestañas */}
-      <div className="mb-6">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-4 md:space-x-8" aria-label="Tabs">
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab('activos')}
+            className={`${
+              activeTab === 'activos'
+                ? 'border-primary-500 text-primary-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            } flex-1 sm:flex-none whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm transition-colors`}
+          >
+            Usuarios Activos
+          </button>
+
+          <PermissionGuard requiredPermission="crear_usuario">
             <button
-              onClick={() => setActiveTab('activos')}
-              className={`${ 
-                activeTab === 'activos'
+              onClick={() => setActiveTab('crear')}
+              className={`${
+                activeTab === 'crear'
                   ? 'border-primary-500 text-primary-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-sm md:text-base flex-1 md:flex-none`}
+              } flex-1 sm:flex-none whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm transition-colors`}
             >
-              Usuarios Activos
+              Crear Usuario
             </button>
-            
-            <PermissionGuard requiredPermission="crear_usuario">
-              <button
-                onClick={() => setActiveTab('crear')}
-                className={`${ 
-                  activeTab === 'crear'
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-sm md:text-base flex-1 md:flex-none`}
-              >
-                Crear Nuevo Usuario
-              </button>
-            </PermissionGuard>
+          </PermissionGuard>
 
-          </nav>
-        </div>
+        </nav>
       </div>
 
       {/* Contenido de las Pestañas */}

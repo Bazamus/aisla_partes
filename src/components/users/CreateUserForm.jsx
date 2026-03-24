@@ -136,13 +136,13 @@ const CreateUserForm = ({ onSubmit, roles = [], isLoading = false }) => {
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Usuario a Crear</label>
         <div className="flex space-x-2 rounded-lg bg-gray-100 p-1">
-          <button type="button" onClick={() => handleUserTypeChange('nuevo')} className={`w-full p-2 text-sm font-medium rounded-md transition-colors ${userType === 'nuevo' ? 'bg-indigo-600 text-white shadow' : 'text-gray-600 hover:bg-gray-200'}`}>
+          <button type="button" onClick={() => handleUserTypeChange('nuevo')} className={`w-full p-2 text-sm font-medium rounded-md transition-colors ${userType === 'nuevo' ? 'bg-primary-600 text-white shadow' : 'text-gray-600 hover:bg-gray-200'}`}>
             <UserPlusIcon className="h-5 w-5 inline mr-2"/>Usuario Nuevo
           </button>
-          <button type="button" onClick={() => handleUserTypeChange('empleado')} className={`w-full p-2 text-sm font-medium rounded-md transition-colors ${userType === 'empleado' ? 'bg-indigo-600 text-white shadow' : 'text-gray-600 hover:bg-gray-200'}`}>
+          <button type="button" onClick={() => handleUserTypeChange('empleado')} className={`w-full p-2 text-sm font-medium rounded-md transition-colors ${userType === 'empleado' ? 'bg-primary-600 text-white shadow' : 'text-gray-600 hover:bg-gray-200'}`}>
             <BuildingOfficeIcon className="h-5 w-5 inline mr-2"/>Vincular Empleado
           </button>
-          <button type="button" onClick={() => handleUserTypeChange('proveedor')} className={`w-full p-2 text-sm font-medium rounded-md transition-colors ${userType === 'proveedor' ? 'bg-indigo-600 text-white shadow' : 'text-gray-600 hover:bg-gray-200'}`}>
+          <button type="button" onClick={() => handleUserTypeChange('proveedor')} className={`w-full p-2 text-sm font-medium rounded-md transition-colors ${userType === 'proveedor' ? 'bg-primary-600 text-white shadow' : 'text-gray-600 hover:bg-gray-200'}`}>
             <TruckIcon className="h-5 w-5 inline mr-2"/>Vincular Proveedor
           </button>
         </div>
@@ -160,13 +160,13 @@ const CreateUserForm = ({ onSubmit, roles = [], isLoading = false }) => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={`Escribe para buscar un ${userType}...`}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
             />
             {loadingSearch && <p className="text-xs text-gray-500 mt-1">Buscando...</p>}
             {searchResults.length > 0 && (
               <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
                 {searchResults.map(item => (
-                  <li key={item.id} onClick={() => handleSelectEntity(item)} className="px-4 py-2 cursor-pointer hover:bg-indigo-50">
+                  <li key={item.id} onClick={() => handleSelectEntity(item)} className="px-4 py-2 cursor-pointer hover:bg-primary-50">
                     {item.nombre}
                   </li>
                 ))}
@@ -180,7 +180,7 @@ const CreateUserForm = ({ onSubmit, roles = [], isLoading = false }) => {
           <input
             type="email" name="email" id="email" required
             placeholder="usuario@dominio.com"
-            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+            className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
             value={formData.email}
             onChange={handleInputChange}
             disabled={linkTo && typeof linkTo.email === 'string'} // Deshabilitar si se autocompleta
@@ -196,7 +196,7 @@ const CreateUserForm = ({ onSubmit, roles = [], isLoading = false }) => {
           <div className="mt-1 relative">
             <input
               type={showPassword ? "text" : "password"} name="password" id="password" required minLength={6}
-              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md"
+              className="focus:ring-primary-500 focus:border-primary-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md"
               value={formData.password}
               onChange={handleInputChange}
             />
@@ -210,7 +210,7 @@ const CreateUserForm = ({ onSubmit, roles = [], isLoading = false }) => {
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
           <input
             type={showPassword ? "text" : "password"} name="confirmPassword" id="confirmPassword" required
-            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+            className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
             value={formData.confirmPassword}
             onChange={handleInputChange}
           />
@@ -228,7 +228,7 @@ const CreateUserForm = ({ onSubmit, roles = [], isLoading = false }) => {
                   value={role.id}
                   checked={formData.roleIds.includes(role.id.toString())}
                   onChange={handleRoleChange}
-                  className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <label htmlFor={`role-${role.id}`} className="ml-3 block text-sm text-gray-900">
                   {role.nombre}
@@ -242,7 +242,7 @@ const CreateUserForm = ({ onSubmit, roles = [], isLoading = false }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
           >
             {isLoading ? 'Creando...' : 'Crear Usuario'}
           </button>

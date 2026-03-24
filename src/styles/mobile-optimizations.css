@@ -300,13 +300,13 @@
     left: 0 !important;
     right: 0 !important;
     z-index: 1000 !important;
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%) !important;
+    background: linear-gradient(135deg, #115e59 0%, #0f766e 50%, #0d9488 100%) !important;
     height: 64px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     padding: 0 12px !important;
-    box-shadow: 0 4px 12px rgba(0, 50, 104, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
   }
 
@@ -319,7 +319,7 @@
     height: 44px !important;
     border-radius: 10px !important; /* Esquinas redondeadas pero cuadrado */
     background: rgba(255, 255, 255, 0.95) !important; /* Fondo blanco semitransparente */
-    color: #1e3a8a !important; /* Color azul para contrastar con fondo azul */
+    color: #0f766e !important; /* Color teal para contrastar con fondo teal */
     border: none !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
@@ -330,7 +330,7 @@
 
   .mobile-back-button:hover {
     background: rgba(255, 255, 255, 1) !important;
-    color: #1e40af !important;
+    color: #0f766e !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 3px 8px rgba(0, 0, 0, 0.18) !important;
   }
@@ -338,7 +338,7 @@
   .mobile-back-button:active {
     transform: translateY(0) scale(0.95) !important;
     background: rgba(241, 245, 249, 0.95) !important;
-    color: #1e3a8a !important;
+    color: #115e59 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
   }
 
@@ -365,7 +365,7 @@
     height: 44px !important;
     border-radius: 10px !important; /* Esquinas redondeadas pero cuadrado */
     background: rgba(255, 255, 255, 0.95) !important; /* Fondo blanco semitransparente */
-    color: #1e3a8a !important; /* Color azul para contrastar con fondo azul */
+    color: #0f766e !important; /* Color teal para contrastar con fondo teal */
     border: none !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
@@ -376,7 +376,7 @@
 
   .mobile-hamburger-improved:hover {
     background: rgba(255, 255, 255, 1) !important;
-    color: #1e40af !important;
+    color: #0f766e !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 3px 8px rgba(0, 0, 0, 0.18) !important;
   }
@@ -384,7 +384,7 @@
   .mobile-hamburger-improved:active {
     transform: translateY(0) scale(0.95) !important;
     background: rgba(241, 245, 249, 0.95) !important;
-    color: #1e3a8a !important;
+    color: #115e59 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
   }
 

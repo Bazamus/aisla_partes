@@ -26,26 +26,25 @@ import {
 // ── KPI Card ────────────────────────────────────────────────────────────────
 const KpiCard = ({ title, value, sub, icon: Icon, iconBg, link, onClick }) => {
   const inner = (
-    <div className="bg-white rounded-card shadow-card hover:shadow-card-hover transition-shadow p-5 flex items-start gap-4 group cursor-pointer">
-      <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${iconBg}`}>
-        <Icon className="h-6 w-6 text-white" aria-hidden="true" />
+    <div className="bg-white rounded-card shadow-card hover:shadow-card-hover transition-shadow p-3 sm:p-5 flex items-start gap-2 sm:gap-4 group cursor-pointer">
+      <div className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${iconBg}`}>
+        <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" aria-hidden="true" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-ink-muted uppercase tracking-wider mb-1">{title}</p>
-        <p className="text-3xl font-bold text-ink-primary leading-none">
+        <p className="text-xs font-semibold text-ink-muted uppercase tracking-normal leading-tight mb-1 truncate">{title}</p>
+        <p className="text-2xl sm:text-3xl font-bold text-ink-primary leading-none">
           {value ?? '—'}
         </p>
         {sub && (
-          <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5">
+          <div className="mt-1.5 flex flex-col gap-y-0.5">
             {sub.map((s, i) => (
-              <span key={i} className="text-xs text-ink-muted">
+              <span key={i} className="text-xs text-ink-muted leading-tight">
                 <span className="font-medium text-ink-secondary">{s.value}</span> {s.label}
               </span>
             ))}
           </div>
         )}
       </div>
-      <ChevronRightIcon className="h-4 w-4 text-ink-muted opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-1" aria-hidden="true" />
     </div>
   );
 
