@@ -434,7 +434,7 @@ export default function Proveedores() {
               resetForm();
               setModalOpen(true);
             }}
-            className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm md:text-base"
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors text-sm md:text-base"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -457,7 +457,7 @@ export default function Proveedores() {
 
           <button
             onClick={handleDescargarPlantilla}
-            className="flex items-center justify-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm md:text-base"
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors text-sm md:text-base"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -529,7 +529,7 @@ export default function Proveedores() {
                   <div className="flex justify-end space-x-2">
                     <button
                       onClick={() => handleEdit(proveedor)}
-                      className="inline-flex items-center px-2 py-1 bg-white text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-300 rounded-md transition-colors"
+                      className="inline-flex items-center px-2 py-1 bg-white text-primary-600 hover:text-primary-700 border border-primary-200 hover:border-primary-300 rounded-md transition-colors"
                     >
                       <PencilIcon className="h-4 w-4" />
                       <span className="ml-1">Editar</span>
@@ -593,7 +593,7 @@ export default function Proveedores() {
               <div className="flex space-x-2 pt-3 border-t border-gray-100">
                 <button
                   onClick={() => handleEdit(proveedor)}
-                  className="flex-1 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md shadow-sm transition-colors text-sm"
+                  className="flex-1 flex items-center justify-center bg-primary-500 hover:bg-primary-600 text-white px-3 py-2 rounded-md shadow-sm transition-colors text-sm"
                 >
                   <PencilIcon className="h-4 w-4 mr-1" />
                   Editar
@@ -641,7 +641,7 @@ export default function Proveedores() {
                       onClick={() => setActiveTab('info')}
                       className={`py-2 px-4 text-sm font-medium border-b-2 ${
                         activeTab === 'info'
-                          ? 'border-blue-500 text-blue-600'
+                          ? 'border-primary-500 text-primary-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                     >
@@ -651,7 +651,7 @@ export default function Proveedores() {
                       onClick={() => setActiveTab('precios')}
                       className={`py-2 px-4 text-sm font-medium border-b-2 ${
                         activeTab === 'precios'
-                          ? 'border-blue-500 text-blue-600'
+                          ? 'border-primary-500 text-primary-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                     >
@@ -897,7 +897,7 @@ export default function Proveedores() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="px-3 py-1 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="px-3 py-1 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                     >
                       {loading ? 'Guardando...' : currentProveedor ? 'Actualizar' : 'Guardar'}
                     </button>
@@ -970,7 +970,7 @@ export default function Proveedores() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => handleObraToggle(obra.id)}
-                              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                             />
                           </div>
                           <div className="ml-3 flex-1 min-w-0">

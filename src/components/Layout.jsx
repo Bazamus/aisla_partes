@@ -2,14 +2,13 @@ import { Fragment, useState, useMemo } from 'react'
 import { Disclosure, Transition, CloseButton } from '@headlessui/react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { Toaster } from 'react-hot-toast'
-import MobileHeader from './MobileHeader'
 import BottomNav from './layout/BottomNav'
 import { ModalProvider } from '../contexts/ModalContext'
 import {
   Bars3Icon,
   XMarkIcon,
   ArrowRightOnRectangleIcon,
+  ArrowLeftIcon,
   UserGroupIcon,
   BriefcaseIcon,
   BuildingOfficeIcon,
@@ -27,6 +26,27 @@ import {
 import {
   HomeIcon as HomeIconSolid,
 } from '@heroicons/react/24/solid'
+
+// ── Páginas principales (sin botón atrás en móvil) ───────────────────────────
+const MAIN_PAGES = ['/', '/partes-empleados', '/partes-proveedores']
+
+// ── Títulos de página para el header móvil ──────────────────────────────────
+const MOBILE_PAGE_TITLES = {
+  '/': 'Inicio',
+  '/partes-empleados': 'Partes Empleados',
+  '/partes-proveedores': 'Partes Proveedores',
+  '/empleados': 'Empleados',
+  '/proveedores': 'Proveedores',
+  '/obras': 'Obras',
+  '/precios': 'Precios',
+  '/gestion-roles': 'Gestión de Roles',
+  '/usuarios': 'Usuarios',
+  '/auditoria': 'Auditoría',
+  '/reportes': 'Reportes',
+  '/perfil': 'Mi Perfil',
+  '/nuevo-parte': 'Nuevo Parte',
+  '/parte-proveedor/nuevo': 'Nuevo Parte Proveedor',
+}
 
 // ── Grupos de navegación para el Sidebar admin ───────────────────────────
 const SIDEBAR_SECTIONS = [
@@ -97,17 +117,29 @@ export default function Layout() {
     return [{ name: 'Inicio', href: '/', exact: true }, { name: 'Mi Perfil', href: '/perfil' }]
   }, [isAdmin])
 
+  // ── Navegación móvil: título y botón atrás ────────────────────────────
+  const isMainPage = MAIN_PAGES.includes(location.pathname)
+
+  const mobilePageTitle = useMemo(() => {
+    const path = location.pathname
+    if (MOBILE_PAGE_TITLES[path]) return MOBILE_PAGE_TITLES[path]
+    if (path.includes('/editar-parte/')) return 'Editar Parte'
+    if (path.includes('/parte-proveedor/')) return 'Parte Proveedor'
+    if (path.includes('/obras-asignadas')) return 'Obras Asignadas'
+    return 'Aisla Partes'
+  }, [location.pathname])
+
   return (
     <ModalProvider>
       <div className="min-h-screen bg-surface-50 flex flex-col pt-14">
 
         {/* ── TOPBAR ──────────────────────────────────────────────────── */}
         <header className="fixed top-0 left-0 right-0 z-30 h-14 bg-primary-600 shadow-nav">
-          <div className="h-full flex items-center justify-between px-4 lg:px-6">
+          <div className="relative h-full flex items-center justify-between px-4 lg:px-6">
 
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              {/* En desktop para admin, mostrar/ocultar sidebar */}
+            {/* ── IZQUIERDA: atrás (móvil detalle) | logo ────────────── */}
+            <div className="flex items-center gap-2">
+              {/* Desktop: colapsar sidebar (solo admin) */}
               {isAdmin && (
                 <button
                   onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -120,7 +152,22 @@ export default function Layout() {
                   }
                 </button>
               )}
-              <Link to="/" className="flex items-center gap-2 group" aria-label="Ir al inicio">
+              {/* Móvil: botón atrás solo en páginas de detalle */}
+              {!isMainPage && (
+                <button
+                  onClick={() => navigate(-1)}
+                  className="sm:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
+                  aria-label="Volver atrás"
+                >
+                  <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              )}
+              {/* Logo: siempre en desktop; en móvil solo en páginas principales */}
+              <Link
+                to="/"
+                className={`flex items-center gap-2 group ${!isMainPage ? 'hidden sm:flex' : 'flex'}`}
+                aria-label="Ir al inicio"
+              >
                 <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center group-hover:bg-white/30 transition-colors">
                   <span className="text-white font-bold text-xs">AP</span>
                 </div>
@@ -128,55 +175,65 @@ export default function Layout() {
               </Link>
             </div>
 
-            {/* Links topbar (desktop) */}
-            <nav className="hidden sm:flex items-center gap-1" aria-label="Navegación superior">
-              {topbarLinks.map(item => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    isLinkActive(item.href, item.exact)
-                      ? 'bg-primary-700 text-white'
-                      : 'text-primary-100 hover:text-white hover:bg-primary-500'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
+            {/* ── CENTRO: título de página (móvil detalle, absoluto) ──── */}
+            {!isMainPage && (
+              <span className="sm:hidden absolute inset-x-0 text-center text-white font-semibold text-sm pointer-events-none px-20 truncate">
+                {mobilePageTitle}
+              </span>
+            )}
 
-            {/* Usuario + logout (desktop) */}
-            <div className="hidden sm:flex items-center gap-3">
-              {user && (
-                <>
-                  <span className="text-primary-100 text-sm truncate max-w-[180px]" title={user.email}>
-                    {user.email}
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    disabled={isLoggingOut}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-700 hover:bg-primary-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
-                    aria-label="Cerrar sesión"
+            {/* ── DERECHA: nav desktop + usuario + hamburguesa ──────────── */}
+            <div className="flex items-center gap-3">
+              {/* Links topbar (desktop) */}
+              <nav className="hidden sm:flex items-center gap-1" aria-label="Navegación superior">
+                {topbarLinks.map(item => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      isLinkActive(item.href, item.exact)
+                        ? 'bg-primary-700 text-white'
+                        : 'text-primary-100 hover:text-white hover:bg-primary-500'
+                    }`}
                   >
-                    <ArrowRightOnRectangleIcon className="h-4 w-4" aria-hidden="true" />
-                    {isLoggingOut ? 'Saliendo…' : 'Cerrar sesión'}
-                  </button>
-                </>
-              )}
-            </div>
+                    {item.name}
+                  </Link>
+                ))}
+              </nav>
 
-            {/* Hamburguesa móvil */}
-            <button
-              className="sm:hidden p-2 rounded-lg text-white hover:bg-primary-500 transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Abrir menú"
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen
-                ? <XMarkIcon  className="h-6 w-6" aria-hidden="true" />
-                : <Bars3Icon  className="h-6 w-6" aria-hidden="true" />
-              }
-            </button>
+              {/* Usuario + logout (desktop) */}
+              <div className="hidden sm:flex items-center gap-3">
+                {user && (
+                  <>
+                    <span className="text-primary-100 text-sm truncate max-w-[180px]" title={user.email}>
+                      {user.email}
+                    </span>
+                    <button
+                      onClick={handleLogout}
+                      disabled={isLoggingOut}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-700 hover:bg-primary-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+                      aria-label="Cerrar sesión"
+                    >
+                      <ArrowRightOnRectangleIcon className="h-4 w-4" aria-hidden="true" />
+                      {isLoggingOut ? 'Saliendo…' : 'Cerrar sesión'}
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Hamburguesa móvil */}
+              <button
+                className="sm:hidden p-2 rounded-lg text-white hover:bg-primary-500 transition-colors"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Abrir menú"
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen
+                  ? <XMarkIcon  className="h-6 w-6" aria-hidden="true" />
+                  : <Bars3Icon  className="h-6 w-6" aria-hidden="true" />
+                }
+              </button>
+            </div>
           </div>
 
           {/* Menú móvil desplegable */}
@@ -342,9 +399,6 @@ export default function Layout() {
 
         {/* ── BOTTOM NAV (solo empleados/proveedores, solo móvil) ──── */}
         {(isEmpleado || isProveedor) && <BottomNav />}
-
-        {/* MobileHeader (detalle pages) */}
-        <MobileHeader />
       </div>
     </ModalProvider>
   )

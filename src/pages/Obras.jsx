@@ -540,7 +540,7 @@ export default function Obras() {
               });
               setModalOpen(true);
             }}
-            className="flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm md:text-base"
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm md:text-base"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -562,7 +562,7 @@ export default function Obras() {
           
           <PlantillaDownloader tipo="obras" />
           
-          <label className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer text-sm md:text-base">
+          <label className="flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors cursor-pointer text-sm md:text-base">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
@@ -646,7 +646,7 @@ export default function Obras() {
                         <span 
                           className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-semibold cursor-help ${
                             (empleadosPorObra[obra.id]?.length || 0) > 0 
-                              ? 'bg-indigo-100 text-indigo-800' 
+                              ? 'bg-primary-100 text-primary-700'
                               : 'bg-gray-100 text-gray-500'
                           }`}
                           title={getEmpleadosTooltip(obra.id)}
@@ -659,14 +659,14 @@ export default function Obras() {
                         <div className="flex space-x-2 justify-end">
                           <button
                             onClick={() => handleAbrirAsignacionEmpleadosEdit(obra)}
-                            className="flex items-center bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1.5 rounded-md shadow-sm transition-colors"
+                            className="flex items-center bg-primary-500 hover:bg-primary-600 text-white px-3 py-1.5 rounded-md shadow-sm transition-colors"
                             title="Gestionar empleados asignados"
                           >
                             <UserGroupIcon className="h-4 w-4" aria-hidden="true" />
                           </button>
                           <button
                             onClick={() => handleEdit(obra)}
-                            className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-md shadow-sm transition-colors min-w-[85px]"
+                            className="flex items-center bg-primary-500 hover:bg-primary-600 text-white px-3 py-1.5 rounded-md shadow-sm transition-colors min-w-[85px]"
                           >
                             <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -738,8 +738,8 @@ export default function Obras() {
                       <span className="text-gray-500 text-sm">Empleados:</span>
                       <span 
                         className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          (empleadosPorObra[obra.id]?.length || 0) > 0 
-                            ? 'bg-indigo-100 text-indigo-800' 
+                          (empleadosPorObra[obra.id]?.length || 0) > 0
+                            ? 'bg-primary-100 text-primary-700'
                             : 'bg-gray-100 text-gray-500'
                         }`}
                       >
@@ -759,14 +759,14 @@ export default function Obras() {
                   <div className="flex space-x-2 pt-3 border-t border-gray-100">
                     <button
                       onClick={() => handleAbrirAsignacionEmpleadosEdit(obra)}
-                      className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-2 rounded-md shadow-sm transition-colors text-sm"
+                      className="flex items-center justify-center bg-primary-500 hover:bg-primary-600 text-white px-3 py-2 rounded-md shadow-sm transition-colors text-sm"
                       aria-label="Gestionar empleados"
                     >
                       <UserGroupIcon className="h-4 w-4" aria-hidden="true" />
                     </button>
                     <button
                       onClick={() => handleEdit(obra)}
-                      className="flex-1 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md shadow-sm transition-colors text-sm"
+                      className="flex-1 flex items-center justify-center bg-primary-500 hover:bg-primary-600 text-white px-3 py-2 rounded-md shadow-sm transition-colors text-sm"
                     >
                       <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -888,7 +888,7 @@ export default function Obras() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
                 >
                   {loading ? 'Guardando...' : 'Guardar'}
                 </button>

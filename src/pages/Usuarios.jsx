@@ -189,7 +189,7 @@ function Usuarios({ initialTab = 'activos' }) {
               onClick={() => setActiveTab('activos')}
               className={`${ 
                 activeTab === 'activos'
-                  ? 'border-indigo-500 text-indigo-600'
+                  ? 'border-primary-500 text-primary-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               } whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-sm md:text-base flex-1 md:flex-none`}
             >
@@ -201,7 +201,7 @@ function Usuarios({ initialTab = 'activos' }) {
                 onClick={() => setActiveTab('crear')}
                 className={`${ 
                   activeTab === 'crear'
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-primary-500 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 } whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-sm md:text-base flex-1 md:flex-none`}
               >

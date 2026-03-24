@@ -191,8 +191,8 @@ export default function Precios() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-blue-800">Lista de Precios</h1>
-          <p className="mt-2 text-md text-blue-600">
+          <h1 className="text-3xl font-bold text-primary-700">Lista de Precios</h1>
+          <p className="mt-2 text-md text-primary-600">
             Gestiona materiales y servicios para partes de trabajo
           </p>
         </div>
@@ -203,8 +203,8 @@ export default function Precios() {
             onClick={() => setTabActiva('materiales')}
             className={`flex-1 px-4 py-2.5 text-sm font-semibold rounded-md transition-colors duration-200 ${
               tabActiva === 'materiales'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                ? 'bg-primary-600 text-white shadow-sm'
+                : 'text-gray-600 hover:text-primary-600 hover:bg-primary-50'
             }`}
           >
             Materiales

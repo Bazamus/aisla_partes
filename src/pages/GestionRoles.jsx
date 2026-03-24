@@ -408,13 +408,13 @@ function GestionRolesContent() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-blue-700">Gestión de Roles y Permisos</h1>
+        <h1 className="text-2xl font-bold text-primary-700">Gestión de Roles y Permisos</h1>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Lista de roles */}
         <div className="md:col-span-1 bg-white p-4 rounded-lg shadow-md">
-          <h2 className="text-lg font-medium mb-4 text-blue-700">Roles</h2>
+          <h2 className="text-lg font-medium mb-4 text-primary-600">Roles</h2>
           {loading.roles ? (
             <div className="flex justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -427,7 +427,7 @@ function GestionRolesContent() {
                     onClick={() => setSelectedRole(role)}
                     className={`w-full text-left px-3 py-2 rounded-md ${
                       selectedRole?.id === role.id
-                        ? 'bg-blue-50 text-blue-700'
+                        ? 'bg-primary-50 text-primary-700'
                         : 'bg-gray-50 hover:bg-gray-100'
                     }`}
                   >
@@ -472,7 +472,7 @@ function GestionRolesContent() {
                                     handleAssignPermission(selectedRole.id, permiso.id);
                                   }
                                 }}
-                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                               />
                               <label htmlFor={`permiso-${permiso.id}`} className="ml-2 block text-sm text-gray-700">
                                 {permiso.nombre}
