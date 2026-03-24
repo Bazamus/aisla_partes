@@ -99,11 +99,10 @@ export default function Layout() {
 
   return (
     <ModalProvider>
-      <div className="min-h-screen bg-surface-50 flex flex-col">
-        <Toaster position="top-right" />
+      <div className="min-h-screen bg-surface-50 flex flex-col pt-14">
 
         {/* ── TOPBAR ──────────────────────────────────────────────────── */}
-        <header className="sticky top-0 z-30 h-14 flex-shrink-0 bg-primary-600 shadow-nav">
+        <header className="fixed top-0 left-0 right-0 z-30 h-14 bg-primary-600 shadow-nav">
           <div className="h-full flex items-center justify-between px-4 lg:px-6">
 
             {/* Logo */}
