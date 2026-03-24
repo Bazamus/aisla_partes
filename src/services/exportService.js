@@ -87,10 +87,10 @@ export const generateProveedorPDF = async (parte) => {
     // Información de la empresa AISLA
     doc.setFontSize(7);
     doc.setTextColor(0, 0, 0);
-    doc.text('C/ Elche Nº4, 28922 Alcorcón (Madrid)', 15, 26);
-    doc.text('Telf: 654 63 99 53', 15, 29);
-    doc.text('www.conductosvimar.com', 15, 32);
-    
+    doc.text('C/ Demo Nº1, 28001 Madrid', 15, 26);
+    doc.text('Telf: 900 000 000', 15, 29);
+    doc.text('www.aislapartes.com', 15, 32);
+
     // COLUMNA 2: Datos del Proveedor
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
@@ -407,9 +407,9 @@ export const generateEmpleadoPDF = async (parte) => {
       // Información de la empresa AISLA
       doc.setFontSize(7);
       doc.setTextColor(0, 0, 0);
-      doc.text('C/ Elche Nº4, 28922 Alcorcón (Madrid)', 15, 26);
-      doc.text('Telf: 654 63 99 53', 15, 29);
-      doc.text('www.conductosvimar.com', 15, 32);
+      doc.text('C/ Demo Nº1, 28001 Madrid', 15, 26);
+      doc.text('Telf: 900 000 000', 15, 29);
+      doc.text('www.aislapartes.com', 15, 32);
       
       // Título grande centrado
       doc.setFontSize(16);

@@ -38,7 +38,7 @@ function findElementByText(selector, text) {
 function generateTestData() {
   const timestamp = Date.now();
   return {
-    email: `test_user_${timestamp}@aclimar-test.com`,
+    email: `test_user_${timestamp}@demo-test.com`,
     nombre: `Usuario Prueba ${timestamp}`,
     telefono: `6${Math.floor(10000000 + Math.random() * 90000000)}`,
     password: `test${timestamp.toString().slice(-4)}`,

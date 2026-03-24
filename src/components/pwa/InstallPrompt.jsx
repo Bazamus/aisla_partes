@@ -94,7 +94,7 @@ function InstallPrompt() {
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 flex items-center gap-3">
           <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
             <img 
-              src="/vimar_favicon.png" 
+              src="/aisla_icon.svg"
               alt="AISLA" 
               className="w-8 h-8"
               onError={(e) => {
