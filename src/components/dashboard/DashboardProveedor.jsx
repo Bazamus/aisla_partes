@@ -44,7 +44,6 @@ export default function DashboardProveedor() {
     try {
       const resultado = await verificarYCorregirPermisosProveedor(userId);
       if (resultado.success) {
-        console.log('Permisos de proveedor verificados y corregidos:', resultado.message);
       } else {
         console.warn('No se pudieron verificar/corregir permisos:', resultado.message);
       }
@@ -91,7 +90,6 @@ export default function DashboardProveedor() {
   const cargarDatosProveedor = async (userId) => {
     try {
       setLoading(true);
-      console.log('Iniciando carga de datos para el usuario:', userId);
       
       // 1. Buscar el proveedor por el user_id
       let { data: proveedor, error: errorProveedor } = await supabase
@@ -99,11 +97,9 @@ export default function DashboardProveedor() {
         .select('*')
         .eq('user_id', userId)
         .single();
-      console.log('Resultado de búsqueda de proveedor por user_id:', proveedor, 'Error:', errorProveedor);  
       
       // Si no se encuentra por user_id, buscar por email
       if (!proveedor && user?.email) {
-        console.log('Proveedor no encontrado por user_id, buscando por email:', user.email);
         
         const { data: proveedorPorEmail, error: errorEmail } = await supabase
           .from('proveedores')
@@ -149,12 +145,10 @@ export default function DashboardProveedor() {
           )
         `)
         .eq('proveedor_id', proveedor.id);
-      console.log('Resultado de carga de obras asignadas:', obrasData, 'Error:', errorObras);  
       if (errorObras) {
         console.error('Error al cargar obras asignadas:', errorObras);
       } else if (obrasData) {
         const obras = obrasData.map(item => item.obras).filter(Boolean);
-        console.log('Obras asignadas:', obras);
         setObrasAsignadas(obras);
 
         // Prueba para verificar RLS o relación en la tabla 'obras'
@@ -165,7 +159,6 @@ export default function DashboardProveedor() {
             .select('*')
             .eq('id', firstObraId)
             .single();
-          console.log('Resultado de consulta directa a tabla obras (ID:', firstObraId, '):', testObra, 'Error:', testError);
         }
       }
       
@@ -182,7 +175,6 @@ export default function DashboardProveedor() {
 
   const cargarPartesProveedor = async (proveedorId, userId) => {
     try {
-      console.log('Cargando partes para proveedor ID:', proveedorId, 'User ID:', userId);
       
       // Preparamos la consulta base para obtener los partes
       const queryBase = `
@@ -204,7 +196,6 @@ export default function DashboardProveedor() {
       
       // Estrategia 1: Intentar filtrar por proveedor_id
       if (proveedorId) {
-        console.log('Intentando filtrar por proveedor_id:', proveedorId);
         const { data: partesPorProveedorId, error: errorProveedorId } = await supabase
           .from('partes_proveedores')
           .select(queryBase)
@@ -212,20 +203,17 @@ export default function DashboardProveedor() {
           .order('fecha', { ascending: false });
         
         if (!errorProveedorId && partesPorProveedorId && partesPorProveedorId.length > 0) {
-          console.log(`Éxito! Se encontraron ${partesPorProveedorId.length} partes por proveedor_id`);
           setPartes(partesPorProveedorId);
           setFilteredPartes(partesPorProveedorId);
           return;
         } else if (errorProveedorId && errorProveedorId.code !== '42703') { // Si el error no es por columna inexistente
           console.error('Error al filtrar por proveedor_id:', errorProveedorId);
         } else {
-          console.log('No se encontraron partes por proveedor_id o la columna no existe');
         }
       }
       
       // Estrategia 2: Intentar filtrar por creado_por (user_id)
       if (userId) {
-        console.log('Intentando filtrar por creado_por (user_id):', userId);
         const { data: partesPorCreador, error: errorCreador } = await supabase
           .from('partes_proveedores')
           .select(queryBase)
@@ -233,20 +221,17 @@ export default function DashboardProveedor() {
           .order('fecha', { ascending: false });
         
         if (!errorCreador && partesPorCreador && partesPorCreador.length > 0) {
-          console.log(`Éxito! Se encontraron ${partesPorCreador.length} partes por creado_por`);
           setPartes(partesPorCreador);
           setFilteredPartes(partesPorCreador);
           return;
         } else if (errorCreador && errorCreador.code !== '42703') { // Si el error no es por columna inexistente
           console.error('Error al filtrar por creado_por:', errorCreador);
         } else {
-          console.log('No se encontraron partes por creado_por o la columna no existe');
         }
       }
       
       // Estrategia 3: Intentar filtrar por email
       if (user?.email) {
-        console.log('Intentando filtrar por email:', user.email);
         const { data: partesPorEmail, error: errorEmail } = await supabase
           .from('partes_proveedores')
           .select(queryBase)
@@ -254,20 +239,17 @@ export default function DashboardProveedor() {
           .order('fecha', { ascending: false });
         
         if (!errorEmail && partesPorEmail && partesPorEmail.length > 0) {
-          console.log(`Éxito! Se encontraron ${partesPorEmail.length} partes por email`);
           setPartes(partesPorEmail);
           setFilteredPartes(partesPorEmail);
           return;
         } else if (errorEmail && errorEmail.code !== '42703') { // Si el error no es por columna inexistente
           console.error('Error al filtrar por email:', errorEmail);
         } else {
-          console.log('No se encontraron partes por email o la columna no existe');
         }
       }
       
       // Estrategia 4: Intentar filtrar por CIF
       if (proveedor?.cif) {
-        console.log('Intentando filtrar por CIF:', proveedor.cif);
         const { data: partesPorCif, error: errorCif } = await supabase
           .from('partes_proveedores')
           .select(queryBase)
@@ -275,20 +257,17 @@ export default function DashboardProveedor() {
           .order('fecha', { ascending: false });
         
         if (!errorCif && partesPorCif && partesPorCif.length > 0) {
-          console.log(`Éxito! Se encontraron ${partesPorCif.length} partes por CIF`);
           setPartes(partesPorCif);
           setFilteredPartes(partesPorCif);
           return;
         } else if (errorCif && errorCif.code !== '42703') { // Si el error no es por columna inexistente
           console.error('Error al filtrar por CIF:', errorCif);
         } else {
-          console.log('No se encontraron partes por CIF o la columna no existe');
         }
       }
       
       // Estrategia 5: Intentar filtrar por código de proveedor
       if (proveedor?.codigo) {
-        console.log('Intentando filtrar por código de proveedor:', proveedor.codigo);
         const { data: partesPorCodigo, error: errorCodigo } = await supabase
           .from('partes_proveedores')
           .select(queryBase)
@@ -296,20 +275,17 @@ export default function DashboardProveedor() {
           .order('fecha', { ascending: false });
         
         if (!errorCodigo && partesPorCodigo && partesPorCodigo.length > 0) {
-          console.log(`Éxito! Se encontraron ${partesPorCodigo.length} partes por código de proveedor`);
           setPartes(partesPorCodigo);
           setFilteredPartes(partesPorCodigo);
           return;
         } else if (errorCodigo && errorCodigo.code !== '42703') { // Si el error no es por columna inexistente
           console.error('Error al filtrar por código de proveedor:', errorCodigo);
         } else {
-          console.log('No se encontraron partes por código de proveedor o la columna no existe');
         }
       }
       
       // Estrategia 6: Intentar filtrar por razón social (búsqueda parcial)
       if (proveedor?.razon_social) {
-        console.log('Intentando filtrar por razón social:', proveedor.razon_social);
         const { data: partesPorRazonSocial, error: errorRazonSocial } = await supabase
           .from('partes_proveedores')
           .select(queryBase)
@@ -317,19 +293,16 @@ export default function DashboardProveedor() {
           .order('fecha', { ascending: false });
         
         if (!errorRazonSocial && partesPorRazonSocial && partesPorRazonSocial.length > 0) {
-          console.log(`Éxito! Se encontraron ${partesPorRazonSocial.length} partes por razón social`);
           setPartes(partesPorRazonSocial);
           setFilteredPartes(partesPorRazonSocial);
           return;
         } else if (errorRazonSocial && errorRazonSocial.code !== '42703') { // Si el error no es por columna inexistente
           console.error('Error al filtrar por razón social:', errorRazonSocial);
         } else {
-          console.log('No se encontraron partes por razón social o la columna no existe');
         }
       }
       
       // Si llegamos aquí, no se encontraron partes con ninguna estrategia
-      console.log('No se encontraron partes para este proveedor con ninguna estrategia de filtrado');
       setPartes([]);
       setFilteredPartes([]);
       

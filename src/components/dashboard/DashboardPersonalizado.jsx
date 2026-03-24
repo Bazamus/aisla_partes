@@ -1,19 +1,203 @@
 import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useStats } from '../../contexts/StatsContext';
 import { supabase } from '../../lib/supabase';
+import { Badge, getStatusVariant, Skeleton, EmptyState } from '../ui';
 import {
   DocumentTextIcon,
   UserGroupIcon,
   BuildingOfficeIcon,
   TruckIcon,
   DocumentPlusIcon,
+  ClipboardDocumentListIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  CalendarDaysIcon,
+  ArrowRightIcon,
+  ChevronRightIcon,
+  PlusCircleIcon,
+  ArrowUpRightIcon,
 } from '@heroicons/react/24/outline';
+import {
+  DocumentTextIcon as DocumentTextSolid,
+} from '@heroicons/react/24/solid';
 
+// ── KPI Card ────────────────────────────────────────────────────────────────
+const KpiCard = ({ title, value, sub, icon: Icon, iconBg, link, onClick }) => {
+  const inner = (
+    <div className="bg-white rounded-card shadow-card hover:shadow-card-hover transition-shadow p-5 flex items-start gap-4 group cursor-pointer">
+      <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${iconBg}`}>
+        <Icon className="h-6 w-6 text-white" aria-hidden="true" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium text-ink-muted uppercase tracking-wider mb-1">{title}</p>
+        <p className="text-3xl font-bold text-ink-primary leading-none">
+          {value ?? '—'}
+        </p>
+        {sub && (
+          <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5">
+            {sub.map((s, i) => (
+              <span key={i} className="text-xs text-ink-muted">
+                <span className="font-medium text-ink-secondary">{s.value}</span> {s.label}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      <ChevronRightIcon className="h-4 w-4 text-ink-muted opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-1" aria-hidden="true" />
+    </div>
+  );
+
+  if (onClick) return <div onClick={onClick} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && onClick()}>{inner}</div>;
+  if (link)   return <Link to={link}>{inner}</Link>;
+  return inner;
+};
+
+// ── Stat Pill ────────────────────────────────────────────────────────────────
+const StatPill = ({ label, value, color }) => (
+  <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl ${color}`}>
+    <span className="text-xl font-bold">{value ?? 0}</span>
+    <span className="text-xs font-medium opacity-80 leading-tight">{label}</span>
+  </div>
+);
+
+// ── Parte Row (tabla desktop) ────────────────────────────────────────────────
+const ParteRow = ({ parte, linkFn }) => (
+  <tr className="hover:bg-surface-50 transition-colors">
+    <td className="px-4 py-3 whitespace-nowrap text-sm text-ink-muted">
+      {new Date(parte.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })}
+    </td>
+    <td className="px-4 py-3 whitespace-nowrap">
+      <Link to={linkFn(parte)} className="text-sm font-medium text-primary-600 hover:text-primary-700">
+        {parte.numero_parte || '—'}
+      </Link>
+    </td>
+    <td className="px-4 py-3 text-sm text-ink-secondary truncate max-w-[160px]">
+      {parte.nombre_trabajador || parte.proveedores?.razon_social || parte.razon_social || parte.empresa || '—'}
+    </td>
+    <td className="px-4 py-3 text-sm text-ink-secondary truncate max-w-[160px]">
+      {parte.nombre_obra || '—'}
+    </td>
+    <td className="px-4 py-3 whitespace-nowrap">
+      <Badge status={parte.estado} dot>{parte.estado}</Badge>
+    </td>
+    <td className="px-4 py-3 whitespace-nowrap text-right">
+      <Link
+        to={linkFn(parte)}
+        className="inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700"
+        aria-label={`Ver parte ${parte.numero_parte}`}
+      >
+        Ver <ArrowRightIcon className="h-3 w-3" aria-hidden="true" />
+      </Link>
+    </td>
+  </tr>
+);
+
+// ── Parte Card (mobile) ──────────────────────────────────────────────────────
+const ParteCardMobile = ({ parte, linkFn }) => (
+  <Link
+    to={linkFn(parte)}
+    className="block bg-surface-50 hover:bg-surface-100 border border-surface-200 rounded-card p-4 transition-colors"
+  >
+    <div className="flex items-start justify-between gap-2 mb-2">
+      <span className="text-sm font-semibold text-ink-primary">{parte.numero_parte || '—'}</span>
+      <Badge status={parte.estado} dot>{parte.estado}</Badge>
+    </div>
+    <p className="text-sm text-ink-secondary truncate">
+      {parte.nombre_trabajador || parte.proveedores?.razon_social || parte.razon_social || parte.empresa || '—'}
+    </p>
+    <p className="text-xs text-ink-muted mt-0.5 truncate">{parte.nombre_obra || '—'}</p>
+    <p className="text-xs text-ink-muted mt-1">
+      {new Date(parte.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}
+    </p>
+  </Link>
+);
+
+// ── Recent Partes Block ──────────────────────────────────────────────────────
+const RecentPartesBlock = ({ title, partes, linkFn, listLink, loading }) => (
+  <div className="bg-white rounded-card shadow-card overflow-hidden">
+    <div className="flex items-center justify-between px-5 py-4 border-b border-surface-200">
+      <h3 className="text-sm font-semibold text-ink-primary">{title}</h3>
+      <Link
+        to={listLink}
+        className="flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700"
+      >
+        Ver todos <ArrowUpRightIcon className="h-3 w-3" aria-hidden="true" />
+      </Link>
+    </div>
+
+    {loading ? (
+      <div className="p-5"><Skeleton type="table" rows={4} cols={5} /></div>
+    ) : !partes || partes.length === 0 ? (
+      <div className="p-5">
+        <EmptyState
+          icon={<ClipboardDocumentListIcon className="h-8 w-8" />}
+          title="Sin partes recientes"
+          description="Aún no hay partes registrados."
+          compact
+        />
+      </div>
+    ) : (
+      <>
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr className="bg-surface-50 border-b border-surface-200">
+                {['Fecha', 'Nº Parte', 'Nombre', 'Obra', 'Estado', ''].map(h => (
+                  <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-ink-muted uppercase tracking-wider">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-surface-100">
+              {partes.map(parte => (
+                <ParteRow key={parte.id} parte={parte} linkFn={linkFn} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden divide-y divide-surface-100">
+          {partes.map(parte => (
+            <div key={parte.id} className="p-3">
+              <ParteCardMobile parte={parte} linkFn={linkFn} />
+            </div>
+          ))}
+        </div>
+      </>
+    )}
+  </div>
+);
+
+// ── Quick Action Button ──────────────────────────────────────────────────────
+const QuickAction = ({ action }) => (
+  <Link
+    to={action.to || action.href}
+    state={action.state}
+    className="flex items-center gap-3 p-4 bg-surface-50 hover:bg-surface-100 border border-surface-200 rounded-card transition-colors group"
+  >
+    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${action.color || 'bg-primary-500'}`}>
+      <action.icon className="h-5 w-5 text-white" aria-hidden="true" />
+    </div>
+    <span className="text-sm font-medium text-ink-secondary group-hover:text-ink-primary transition-colors">
+      {action.name}
+    </span>
+    <ArrowRightIcon className="h-4 w-4 text-ink-muted ml-auto opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+  </Link>
+);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ═══════════════════════════════════════════════════════════════════════════════
 function DashboardPersonalizado() {
   const { user, hasRole } = useAuth();
   const { updateStats } = useStats();
+  const navigate = useNavigate();
+
   const [stats, setStats] = useState({
     totalPartes: 0,
     totalEmpleados: 0,
@@ -26,19 +210,18 @@ function DashboardPersonalizado() {
     partesAprobados: 0,
     partesPendientes: 0,
     partesCompletados: 0,
-    partesHoy: 0
+    partesHoy: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError]   = useState(null);
   const hasFetched = useRef(false);
 
-  // Memoizar los booleanos de rol (no funciones) para evitar re-renders
-  const isAdmin = useMemo(() => hasRole('administrador') || hasRole('superadmin'), [hasRole]);
-  const isSupervisor = useMemo(() => hasRole('supervisor') || hasRole('administrador') || hasRole('superadmin'), [hasRole]);
-  const isEmpleado = useMemo(() => hasRole('empleado'), [hasRole]);
-  const isProveedor = useMemo(() => hasRole('proveedor'), [hasRole]);
+  const isAdmin     = useMemo(() => hasRole('administrador') || hasRole('superadmin'),  [hasRole]);
+  const isSupervisor= useMemo(() => hasRole('supervisor') || hasRole('administrador') || hasRole('superadmin'), [hasRole]);
+  const isEmpleado  = useMemo(() => hasRole('empleado'),   [hasRole]);
+  const isProveedor = useMemo(() => hasRole('proveedor'),  [hasRole]);
 
-  // Cargar estadísticas una sola vez al montar
+  // ── Cargar estadísticas ────────────────────────────────────────────────────
   useEffect(() => {
     if (!user || hasFetched.current) return;
     hasFetched.current = true;
@@ -55,14 +238,13 @@ function DashboardPersonalizado() {
           try {
             const today = new Date().toISOString().split('T')[0];
 
-            // BATCH 1: Todas las queries de conteo en paralelo
             const [
               resPartesEmp, resPartesProv,
               resEmpleados, resObras, resProveedores, resObrasActivas,
               resAprobadosEmp, resPendientesEmp,
               resAprobadosProv, resPendientesProv,
               resEmpleadosHoy, resProveedoresHoy,
-              resRecientesEmp, resRecientesProv
+              resRecientesEmp, resRecientesProv,
             ] = await Promise.all([
               supabase.from('partes').select('*', { count: 'exact', head: true }),
               supabase.from('partes_proveedores').select('*', { count: 'exact', head: true }),
@@ -77,21 +259,20 @@ function DashboardPersonalizado() {
               supabase.from('partes').select('*', { count: 'exact', head: true }).gte('created_at', today + 'T00:00:00.000Z').lt('created_at', today + 'T23:59:59.999Z'),
               supabase.from('partes_proveedores').select('*', { count: 'exact', head: true }).gte('created_at', today + 'T00:00:00.000Z').lt('created_at', today + 'T23:59:59.999Z'),
               supabase.from('partes').select('id, fecha, estado, nombre_trabajador, nombre_obra, numero_parte').order('fecha', { ascending: false }).limit(5),
-              supabase.from('partes_proveedores').select('id, fecha, estado, razon_social, empresa, proveedor_id, numero_parte, obra_id, trabajos').order('fecha', { ascending: false }).limit(5)
+              supabase.from('partes_proveedores').select('id, fecha, estado, razon_social, empresa, proveedor_id, numero_parte, obra_id, trabajos').order('fecha', { ascending: false }).limit(5),
             ]);
 
-            // Procesar conteos
-            estadisticas.totalPartesEmpleados = resPartesEmp.count || 0;
-            estadisticas.totalPartesProveedores = resPartesProv.count || 0;
-            estadisticas.totalPartes = estadisticas.totalPartesEmpleados + estadisticas.totalPartesProveedores;
-            estadisticas.totalEmpleados = resEmpleados.count || 0;
-            estadisticas.totalObras = resObras.count || 0;
-            estadisticas.totalProveedores = resProveedores.count || 0;
-            estadisticas.obrasActivas = resObrasActivas.count || 0;
-            estadisticas.partesAprobados = (resAprobadosEmp.count || 0) + (resAprobadosProv.count || 0);
-            estadisticas.partesPendientes = (resPendientesEmp.count || 0) + (resPendientesProv.count || 0);
+            estadisticas.totalPartesEmpleados  = resPartesEmp.count  || 0;
+            estadisticas.totalPartesProveedores= resPartesProv.count || 0;
+            estadisticas.totalPartes       = estadisticas.totalPartesEmpleados + estadisticas.totalPartesProveedores;
+            estadisticas.totalEmpleados    = resEmpleados.count    || 0;
+            estadisticas.totalObras        = resObras.count        || 0;
+            estadisticas.totalProveedores  = resProveedores.count  || 0;
+            estadisticas.obrasActivas      = resObrasActivas.count || 0;
+            estadisticas.partesAprobados   = (resAprobadosEmp.count || 0) + (resAprobadosProv.count || 0);
+            estadisticas.partesPendientes  = (resPendientesEmp.count || 0) + (resPendientesProv.count || 0);
             estadisticas.partesCompletados = estadisticas.partesAprobados;
-            estadisticas.partesHoy = (resEmpleadosHoy.count || 0) + (resProveedoresHoy.count || 0);
+            estadisticas.partesHoy         = (resEmpleadosHoy.count || 0) + (resProveedoresHoy.count || 0);
 
             // Procesar partes recientes de proveedores con info de proveedor
             let partesProveedoresConInfo = [];
@@ -113,22 +294,23 @@ function DashboardPersonalizado() {
               });
             }
 
-            const partesEmpleados = (resRecientesEmp.data || []).map(p => ({ ...p, tipo_parte: 'empleado' }));
-            const partesProveedores = partesProveedoresConInfo.map(p => ({ ...p, tipo_parte: 'proveedor' }));
+            const partesEmpleados  = (resRecientesEmp.data || []).map(p => ({ ...p, tipo_parte: 'empleado' }));
+            const partesProveedores= partesProveedoresConInfo.map(p => ({ ...p, tipo_parte: 'proveedor' }));
 
-            estadisticas.partesRecientesEmpleados = partesEmpleados.slice(0, 5);
-            estadisticas.partesRecientesProveedores = partesProveedores.slice(0, 5);
+            estadisticas.partesRecientesEmpleados  = partesEmpleados.slice(0, 5);
+            estadisticas.partesRecientesProveedores= partesProveedores.slice(0, 5);
             estadisticas.partesRecientes = [...partesEmpleados, ...partesProveedores]
               .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
               .slice(0, 5);
 
-          } catch (error) {
-            console.error('Error al cargar estadísticas de administrador:', error);
+          } catch (err) {
+            console.error('Error al cargar estadísticas de administrador:', err);
             Object.assign(estadisticas, {
               totalPartes: 0, totalEmpleados: 0, totalObras: 0, totalProveedores: 0,
-              obrasActivas: 0, partesAprobados: 0, partesPendientes: 0, partesRecientes: []
+              obrasActivas: 0, partesAprobados: 0, partesPendientes: 0, partesRecientes: [],
             });
           }
+
         } else if (isEmpleado) {
           try {
             const { data: empleadoData, error: errorEmpleado } = await supabase
@@ -140,24 +322,25 @@ function DashboardPersonalizado() {
                 { count: partesAprobadosEmpleado },
                 { count: partesPendientesEmpleado },
                 { data: obrasEmpleado },
-                { data: partesRecientesEmpleado }
+                { data: partesRecientesEmpleado },
               ] = await Promise.all([
                 supabase.from('partes').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
                 supabase.from('partes').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('estado', 'aprobado'),
                 supabase.from('partes').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('estado', 'pendiente'),
                 supabase.from('empleados_obras').select('obras(id, nombre_obra, estado)').eq('empleado_id', empleadoData.id),
-                supabase.from('partes').select('id, fecha, estado, nombre_obra, numero_parte').eq('user_id', user.id).order('fecha', { ascending: false }).limit(5)
+                supabase.from('partes').select('id, fecha, estado, nombre_obra, numero_parte').eq('user_id', user.id).order('fecha', { ascending: false }).limit(5),
               ]);
-              estadisticas.totalPartes = totalPartesEmpleado || 0;
-              estadisticas.partesAprobados = partesAprobadosEmpleado || 0;
-              estadisticas.partesPendientes = partesPendientesEmpleado || 0;
-              estadisticas.obrasAsignadas = obrasEmpleado?.length || 0;
-              estadisticas.partesRecientes = partesRecientesEmpleado || [];
+              estadisticas.totalPartes       = totalPartesEmpleado     || 0;
+              estadisticas.partesAprobados   = partesAprobadosEmpleado || 0;
+              estadisticas.partesPendientes  = partesPendientesEmpleado|| 0;
+              estadisticas.obrasAsignadas    = obrasEmpleado?.length   || 0;
+              estadisticas.partesRecientes   = partesRecientesEmpleado || [];
             }
-          } catch (error) {
-            console.error('Error al cargar estadísticas de empleado:', error);
+          } catch (err) {
+            console.error('Error al cargar estadísticas de empleado:', err);
             if (isMounted) setError('Error al cargar estadísticas');
           }
+
         } else if (isProveedor) {
           try {
             const { data: proveedorData, error: errorProveedor } = await supabase
@@ -170,22 +353,22 @@ function DashboardPersonalizado() {
                 { count: partesAprobadosProveedor },
                 { count: partesPendientesProveedor },
                 { data: obrasProveedor },
-                { data: partesRecientesProveedor }
+                { data: partesRecientesProveedor },
               ] = await Promise.all([
                 supabase.from('partes_proveedores').select('*', { count: 'exact', head: true }).eq('proveedor_id', proveedorId),
                 supabase.from('partes_proveedores').select('*', { count: 'exact', head: true }).eq('proveedor_id', proveedorId).eq('estado', 'aprobado'),
                 supabase.from('partes_proveedores').select('*', { count: 'exact', head: true }).eq('proveedor_id', proveedorId).eq('estado', 'pendiente'),
                 supabase.from('proveedores_obras').select('obras(id, nombre_obra, estado)').eq('proveedor_id', proveedorId),
-                supabase.from('partes_proveedores').select('id, fecha, estado, obras(nombre_obra), numero_parte').eq('proveedor_id', proveedorId).order('fecha', { ascending: false }).limit(5)
+                supabase.from('partes_proveedores').select('id, fecha, estado, obras(nombre_obra), numero_parte').eq('proveedor_id', proveedorId).order('fecha', { ascending: false }).limit(5),
               ]);
-              estadisticas.totalPartes = totalPartesProveedor || 0;
-              estadisticas.partesAprobados = partesAprobadosProveedor || 0;
+              estadisticas.totalPartes      = totalPartesProveedor      || 0;
+              estadisticas.partesAprobados  = partesAprobadosProveedor  || 0;
               estadisticas.partesPendientes = partesPendientesProveedor || 0;
-              estadisticas.obrasAsignadas = obrasProveedor?.length || 0;
-              estadisticas.partesRecientes = partesRecientesProveedor || [];
+              estadisticas.obrasAsignadas   = obrasProveedor?.length    || 0;
+              estadisticas.partesRecientes  = partesRecientesProveedor  || [];
             }
-          } catch (error) {
-            console.error('Error al cargar estadísticas de proveedor:', error);
+          } catch (err) {
+            console.error('Error al cargar estadísticas de proveedor:', err);
             if (isMounted) setError('Error al cargar estadísticas');
           }
         }
@@ -194,17 +377,17 @@ function DashboardPersonalizado() {
           setStats(estadisticas);
           if (isAdmin || isSupervisor) {
             updateStats({
-              totalPartes: estadisticas.totalPartes,
-              partesPendientes: estadisticas.partesPendientes,
+              totalPartes:       estadisticas.totalPartes,
+              partesPendientes:  estadisticas.partesPendientes,
               partesCompletados: estadisticas.partesCompletados,
-              partesAprobados: estadisticas.partesAprobados,
-              partesHoy: estadisticas.partesHoy,
-              loading: false
+              partesAprobados:   estadisticas.partesAprobados,
+              partesHoy:         estadisticas.partesHoy,
+              loading:           false,
             });
           }
         }
-      } catch (error) {
-        console.error('Error general al cargar estadísticas:', error);
+      } catch (err) {
+        console.error('Error general al cargar estadísticas:', err);
         if (isMounted) setError('Error al cargar estadísticas');
       } finally {
         if (isMounted) setLoading(false);
@@ -213,611 +396,260 @@ function DashboardPersonalizado() {
 
     cargarEstadisticas();
     return () => { isMounted = false; };
-  }, [user]); // Solo depende de user - los roles se resuelven dentro
+  }, [user]);
 
-  // Tarjetas para administradores y supervisores
-  // Función para hacer scroll al bloque de partes de trabajo
-  const scrollToPartesSection = () => {
-    console.log('[ScrollDebug] Iniciando función scrollToPartesSection');
-    
-    // Intentar encontrar el elemento con el ID específico primero
-    let partesSection = document.getElementById('partes-trabajo-section');
-    console.log('[ScrollDebug] Elemento encontrado por ID:', !!partesSection);
-    
-    // Si no se encuentra, buscar por selector más general
-    if (!partesSection) {
-      // Buscar por texto del título (incluyendo H2 para dashboards específicos)
-      const headers = document.querySelectorAll('h1, h2');
-      console.log('[ScrollDebug] Buscando en', headers.length, 'headers');
-      
-      for (const header of headers) {
-        if (header.textContent?.includes('Partes de Trabajo') || 
-            header.textContent?.includes('Mis Partes de Trabajo')) {
-          partesSection = header;
-          console.log('[ScrollDebug] Elemento encontrado por texto:', header.textContent);
-          break;
-        }
-      }
-    }
-    
-    // Como último recurso, buscar cualquier contenedor con filtros de partes
-    if (!partesSection) {
-      partesSection = document.querySelector('[class*="bg-white"][class*="rounded"]');
-      console.log('[ScrollDebug] Elemento encontrado por fallback:', !!partesSection);
-    }
-    
-    if (partesSection) {
-      // Detectar si es móvil para ajustar el offset
-      const isMobile = window.innerWidth <= 768;
-      console.log('[ScrollDebug] Es móvil:', isMobile, 'Ancho:', window.innerWidth);
-      
-      // Obtener las dimensiones actuales
-      const rect = partesSection.getBoundingClientRect();
-      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
-      
-      // Calcular la posición absoluta del elemento
-      const elementTop = rect.top + currentScrollY;
-      
-      // Calcular offset dinámicamente basado en elementos visibles
-      let mobileOffset = 80; // Offset base para desktop
-      
-      if (isMobile) {
-        // Header móvil fijo tiene 64px de altura según mobile-optimizations.css
-        const mobileHeaderHeight = 64;
-        
-        // Buscar elementos adicionales que puedan afectar la posición
-        const mobileHeader = document.querySelector('.mobile-header-improved');
-        const dashboardElements = document.querySelectorAll('[class*="dashboard"]');
-        
-        // Calcular offset móvil considerando:
-        // 1. Header móvil fijo (64px)
-        // 2. Padding adicional para separación visual (20px)
-        // 3. Posibles elementos del dashboard que estén arriba (InstallPWA, etc.)
-        mobileOffset = mobileHeaderHeight + 20;
-        
-        // Si hay elementos del dashboard visibles arriba, agregar más espacio
-        if (dashboardElements.length > 0) {
-          mobileOffset += 40; // Espacio adicional para componentes del dashboard
-        }
-        
-        console.log('[ScrollDebug] Offset móvil calculado:', {
-          headerHeight: mobileHeaderHeight,
-          totalOffset: mobileOffset,
-          dashboardElements: dashboardElements.length
-        });
-      }
-      
-      const targetPosition = Math.max(0, elementTop - mobileOffset);
-      
-      console.log('[ScrollDebug] Datos de scroll:', {
-        elementTop,
-        currentScrollY,
-        offset: mobileOffset,
-        targetPosition,
-        rect
-      });
-      
-      // Usar scrollTo con comportamiento suave
-      // En móvil, usar un pequeño delay para asegurar que el DOM esté completamente renderizado
-      if (isMobile) {
-        setTimeout(() => {
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
-          console.log('[ScrollDebug] Scroll móvil ejecutado con delay a posición:', targetPosition);
-        }, 100);
-      } else {
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        });
-        console.log('[ScrollDebug] Scroll desktop ejecutado a posición:', targetPosition);
-      }
-    } else {
-      console.warn('[ScrollDebug] No se encontró la sección de partes de trabajo para hacer scroll');
-    }
-  };
-
-  const adminCards = [
-    {
-      id: 'admin-partes',
-      title: 'Partes de Trabajo',
-      value: stats.totalPartes,
-      detailItems: [
-        { label: 'Empleados', value: stats.totalPartesEmpleados },
-        { label: 'Proveedores', value: stats.totalPartesProveedores }
-      ],
-      icon: <DocumentTextIcon className="h-12 w-12 text-indigo-600" />,
-      onClick: scrollToPartesSection,
-      permission: 'administrador'
-    },
-    {
-      id: 'admin-empleados',
-      title: 'Empleados',
-      value: stats.totalEmpleados,
-      icon: <UserGroupIcon className="h-12 w-12 text-blue-600" />,
-      link: '/empleados',
-      permission: 'administrador'
-    },
-    {
-      id: 'admin-obras',
-      title: 'Obras',
-      value: stats.totalObras,
-      icon: <BuildingOfficeIcon className="h-12 w-12 text-green-600" />,
-      link: '/obras',
-      permission: 'administrador'
-    },
-    {
-      id: 'admin-proveedores',
-      title: 'Proveedores',
-      value: stats.totalProveedores,
-      icon: <TruckIcon className="h-12 w-12 text-yellow-600" />,
-      link: '/proveedores',
-      permission: 'administrador'
-    }
-  ];
-
-  // Tarjetas para empleados
-  const empleadoCards = [
-    {
-      id: 'empleado-mis-partes',
-      title: 'Mis Partes',
-      value: stats.totalPartes,
-      icon: <DocumentTextIcon className="h-12 w-12 text-indigo-600" />,
-      link: '/partes-empleados',
-      permission: 'empleado'
-    },
-    {
-      id: 'empleado-nuevo-parte',
-      title: 'Nuevo Parte',
-      icon: <DocumentPlusIcon className="h-12 w-12 text-green-600" />,
-      link: '/nuevo-parte',
-      permission: 'empleado'
-    },
-    {
-      id: 'empleado-obras-asignadas',
-      title: 'Obras Asignadas',
-      value: stats.obrasAsignadas,
-      icon: <BuildingOfficeIcon className="h-12 w-12 text-blue-600" />,
-      link: '/obras',
-      permission: 'empleado'
-    }
-  ];
-
-  // Tarjetas para proveedores
-  const proveedorCards = [
-    {
-      id: 'proveedor-mis-partes',
-      title: 'Mis Partes',
-      value: stats.totalPartes,
-      icon: <DocumentTextIcon className="h-12 w-12 text-indigo-600" />,
-      link: '/partes-proveedores',
-      permission: 'proveedor'
-    },
-    {
-      id: 'proveedor-nuevo-parte',
-      title: 'Nuevo Parte',
-      icon: <DocumentPlusIcon className="h-12 w-12 text-green-600" />,
-      link: '/parte-proveedor/nuevo',
-      permission: 'proveedor'
-    },
-    {
-      id: 'proveedor-obras-asignadas',
-      title: 'Obras Asignadas',
-      value: stats.obrasAsignadas,
-      icon: <BuildingOfficeIcon className="h-12 w-12 text-blue-600" />,
-      link: '/obras',
-      permission: 'proveedor'
-    }
-  ];
-
-  // Determinar qué tarjetas mostrar según el rol
-  const cards = (isAdmin || isSupervisor)
-    ? adminCards
-    : isEmpleado
-      ? empleadoCards
-      : proveedorCards;
-
-  // Acciones rápidas memoizadas
+  // ── Quick actions ────────────────────────────────────────────────────────
   const filteredQuickActions = useMemo(() => {
     const quickActions = [
       ...(hasRole('superadmin') ? [{
-        id: 'importar-partes-trabajo', name: 'Importar Partes', to: '/importar-partes-trabajo',
-        icon: DocumentPlusIcon, color: 'bg-purple-500', permission: 'superadmin'
+        id: 'importar', name: 'Importar Partes', to: '/importar-partes-trabajo',
+        icon: DocumentPlusIcon, color: 'bg-violet-500',
       }] : []),
-      ...((isAdmin || isSupervisor) ? [{
-        id: 'crear-parte-empleado', name: 'Crear Parte Empleado', to: '/nuevo-parte',
-        state: { adminMode: true }, icon: DocumentPlusIcon, color: 'bg-blue-500', permission: 'administrador'
-      }] : []),
-      ...((isAdmin || isSupervisor) ? [{
-        id: 'crear-parte-proveedor', name: 'Crear Parte Proveedor', to: '/parte-proveedor/nuevo',
-        icon: DocumentPlusIcon, color: 'bg-amber-500', permission: 'administrador'
-      }] : []),
-      ...(isEmpleado && !isAdmin && !isSupervisor ? [{
-        id: 'empleado-crear-parte', name: 'Crear Parte', href: '/nuevo-parte',
-        icon: DocumentPlusIcon, color: 'bg-blue-500', permission: 'empleado'
-      }] : []),
-      ...(isProveedor ? [{
-        id: 'proveedor-crear-parte', name: 'Crear Parte Proveedor', href: '/parte-proveedor/nuevo',
-        icon: DocumentPlusIcon, color: 'bg-amber-500', permission: 'proveedor'
-      }] : [])
+      ...((isAdmin || isSupervisor) ? [
+        { id: 'crear-emp',  name: 'Crear Parte Empleado',   to: '/nuevo-parte',            state: { adminMode: true }, icon: DocumentPlusIcon, color: 'bg-primary-500' },
+        { id: 'crear-prov', name: 'Crear Parte Proveedor',  to: '/parte-proveedor/nuevo',  icon: DocumentPlusIcon, color: 'bg-amber-500' },
+      ] : []),
+      ...(isEmpleado && !isAdmin && !isSupervisor ? [
+        { id: 'emp-crear', name: 'Crear Parte', to: '/nuevo-parte', icon: DocumentPlusIcon, color: 'bg-primary-500' },
+      ] : []),
+      ...(isProveedor ? [
+        { id: 'prov-crear', name: 'Crear Parte Proveedor', to: '/parte-proveedor/nuevo', icon: DocumentPlusIcon, color: 'bg-amber-500' },
+      ] : []),
     ];
-
-    return quickActions.filter(action => {
-      if (!action.permission) return true;
-      if (action.permission === 'administrador') return isAdmin;
-      if (action.permission === 'empleado') return isEmpleado;
-      if (action.permission === 'proveedor') return isProveedor;
-      if (action.permission === 'superadmin') return hasRole('superadmin');
-      return false;
-    });
+    return quickActions;
   }, [isAdmin, isSupervisor, isEmpleado, isProveedor, hasRole]);
 
-if (loading) {
-  return (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      <span className="ml-3 text-gray-700">Cargando estadísticas...</span>
-    </div>
-  );
-}
+  // ── Date greeting ────────────────────────────────────────────────────────
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Buenos días';
+    if (h < 19) return 'Buenas tardes';
+    return 'Buenas noches';
+  }, []);
 
-return (
-  <div className="space-y-6">
-    <h2 className="text-2xl font-bold text-gray-900">
-      Bienvenido, {user?.email}
-    </h2>
+  const todayLabel = useMemo(() =>
+    new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+  []);
 
-      {/* Acciones rápidas */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Acciones Rápidas</h3>
-        <div className="flex flex-row items-stretch gap-4 overflow-x-auto">
-          {/* Renderizar acciones rápidas dinámicamente desde el array quickActions */}
-          {filteredQuickActions.map((action) => (
+  // ── Loading state ────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        {/* Header skeleton */}
+        <div className="h-20 bg-surface-100 rounded-card animate-pulse" />
+        {/* KPI grid skeleton */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1,2,3,4].map(i => <div key={i} className="h-28 bg-surface-100 rounded-card animate-pulse" />)}
+        </div>
+        {/* Tables skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {[1,2].map(i => <div key={i} className="h-64 bg-surface-100 rounded-card animate-pulse" />)}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Error state ──────────────────────────────────────────────────────────
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <p className="text-ink-muted text-sm mb-3">{error}</p>
+        <button
+          onClick={() => { hasFetched.current = false; setLoading(true); setError(null); }}
+          className="text-sm font-medium text-primary-600 hover:text-primary-700"
+        >
+          Reintentar
+        </button>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADMIN / SUPERVISOR VIEW
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (isAdmin || isSupervisor) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+
+        {/* ── Greeting Header ──────────────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-bold text-ink-primary">
+              {greeting}, {user?.email?.split('@')[0]}
+            </h1>
+            <p className="text-sm text-ink-muted capitalize mt-0.5">{todayLabel}</p>
+          </div>
+          {/* Quick create buttons */}
+          <div className="flex items-center gap-2 flex-wrap">
             <Link
-              key={action.id}
-              to={action.to || action.href}
-              state={action.state}
-              className={`flex flex-col items-center justify-center p-4 ${action.color ? action.color.replace('bg-', 'bg-') + '/10' : 'bg-indigo-50'} rounded-lg hover:${action.color ? action.color.replace('bg-', 'bg-') + '/20' : 'bg-indigo-100'} transition-colors min-w-24`}
+              to="/nuevo-parte"
+              state={{ adminMode: true }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-input transition-colors shadow-sm"
             >
-              {action.icon && <action.icon className={`h-8 w-8 ${action.color ? action.color.replace('bg-', 'text-') : 'text-indigo-600'} mb-2`} />}
-              <span className="text-sm text-center font-medium text-gray-900">{action.name}</span>
+              <PlusCircleIcon className="h-4 w-4" aria-hidden="true" />
+              Parte Empleado
             </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Tarjetas de estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {cards.map((card, index) => {
-          const CardWrapper = card.onClick ? 'div' : Link;
-          const cardProps = card.onClick 
-            ? { 
-                onClick: card.onClick, 
-                className: "bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" 
-              }
-            : { 
-                to: card.link, 
-                className: "bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow" 
-              };
-
-          return (
-            <CardWrapper
-              key={card.id}
-              {...cardProps}
+            <Link
+              to="/parte-proveedor/nuevo"
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-surface-100 text-ink-secondary text-sm font-medium rounded-input border border-surface-200 transition-colors"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">{card.title}</h3>
-                  {card.value !== undefined && (
-                    <p className="text-3xl font-bold text-gray-800 mt-2">{card.value}</p>
-                  )}
-                  {card.detailItems && card.detailItems.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      {card.detailItems.map((item, idx) => (
-                        <div key={idx} className="flex items-center text-sm">
-                          <span className="text-gray-600">{item.label}:</span>
-                          <span className="ml-2 font-medium text-gray-800">{item.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="bg-indigo-50 p-3 rounded-full">{card.icon}</div>
-              </div>
-            </CardWrapper>
-          );
-        })}
+              <PlusCircleIcon className="h-4 w-4" aria-hidden="true" />
+              Parte Proveedor
+            </Link>
+          </div>
+        </div>
+
+        {/* ── KPI Cards ────────────────────────────────────────────────── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <KpiCard
+            title="Total Partes"
+            value={stats.totalPartes}
+            sub={[
+              { value: stats.totalPartesEmpleados,   label: 'empleados' },
+              { value: stats.totalPartesProveedores, label: 'proveedores' },
+            ]}
+            icon={DocumentTextIcon}
+            iconBg="bg-primary-500"
+            link="/partes-empleados"
+          />
+          <KpiCard
+            title="Empleados"
+            value={stats.totalEmpleados}
+            icon={UserGroupIcon}
+            iconBg="bg-blue-500"
+            link="/empleados"
+          />
+          <KpiCard
+            title="Obras"
+            value={stats.totalObras}
+            sub={[{ value: stats.obrasActivas, label: 'activas' }]}
+            icon={BuildingOfficeIcon}
+            iconBg="bg-emerald-500"
+            link="/obras"
+          />
+          <KpiCard
+            title="Proveedores"
+            value={stats.totalProveedores}
+            icon={TruckIcon}
+            iconBg="bg-amber-500"
+            link="/proveedores"
+          />
+        </div>
+
+        {/* ── Secondary stats pills ────────────────────────────────────── */}
+        <div className="flex flex-wrap gap-3">
+          <StatPill
+            label="Aprobados"
+            value={stats.partesAprobados}
+            color="bg-status-success/10 text-status-success"
+          />
+          <StatPill
+            label="Pendientes de revisión"
+            value={stats.partesPendientes}
+            color="bg-status-warning/10 text-status-warning"
+          />
+          <StatPill
+            label="Partes hoy"
+            value={stats.partesHoy}
+            color="bg-primary-50 text-primary-700"
+          />
+        </div>
+
+        {/* ── Quick Actions (solo superadmin o extras) ──────────────────── */}
+        {hasRole('superadmin') && (
+          <div>
+            <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">Acciones de sistema</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredQuickActions
+                .filter(a => a.id === 'importar')
+                .map(action => <QuickAction key={action.id} action={action} />)
+              }
+            </div>
+          </div>
+        )}
+
+        {/* ── Recent Partes (2 columnas en lg) ─────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <RecentPartesBlock
+            title="Partes Recientes · Empleados"
+            partes={stats.partesRecientesEmpleados}
+            linkFn={p => `/ver-detalle/empleado/${p.id}`}
+            listLink="/partes-empleados"
+            loading={false}
+          />
+          <RecentPartesBlock
+            title="Partes Recientes · Proveedores"
+            partes={stats.partesRecientesProveedores}
+            linkFn={p => `/parte-proveedor/ver/${p.id}`}
+            listLink="/partes-proveedores"
+            loading={false}
+          />
+        </div>
+
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EMPLEADO / PROVEEDOR VIEW (fallback — DashboardEmpleado handles the main)
+  // ═══════════════════════════════════════════════════════════════════════════
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <h2 className="text-xl font-bold text-ink-primary">Bienvenido</h2>
+
+      {/* Stats pills */}
+      <div className="flex flex-wrap gap-3">
+        <StatPill label="Partes totales" value={stats.totalPartes} color="bg-primary-50 text-primary-700" />
+        <StatPill label="Aprobados"      value={stats.partesAprobados}  color="bg-status-success/10 text-status-success" />
+        <StatPill label="Pendientes"     value={stats.partesPendientes} color="bg-status-warning/10 text-status-warning" />
       </div>
 
-      {/* Bloques de Partes Recientes rediseñado para una columna horizontal */}
-      {(isAdmin || isSupervisor) && (
-        <div className="mb-8 space-y-6">
-          {/* Bloque Partes Recientes Empleados */}
-          <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Partes Recientes Empleados</h3>
-            
-            {/* Vista Desktop - Tabla completa */}
-            <div className="hidden md:block overflow-x-auto -mx-4 md:mx-0">
-              <div className="inline-block min-w-full align-middle">
-                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                  <table className="min-w-full divide-y divide-gray-300">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nº Parte</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trabajador</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Obra</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {stats.partesRecientesEmpleados && stats.partesRecientesEmpleados.length > 0 ? (
-                        stats.partesRecientesEmpleados.map((parte) => (
-                          <tr key={parte.id} className="hover:bg-gray-50 cursor-pointer">
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Link to={`/ver-detalle/empleado/${parte.id}`} className="block">
-                                {new Date(parte.fecha).toLocaleDateString()}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Link to={`/ver-detalle/empleado/${parte.id}`} className="block">
-                                {parte.numero_parte || 'N/A'}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Link to={`/ver-detalle/empleado/${parte.id}`} className="block">
-                                {parte.nombre_trabajador || 'Sin empleado'}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Link to={`/ver-detalle/empleado/${parte.id}`} className="block">
-                                {parte.nombre_obra || 'Sin obra'}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-4 whitespace-nowrap">
-                              <Link to={`/ver-detalle/empleado/${parte.id}`} className="block">
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  parte.estado === 'Aprobado' || parte.estado === 'aprobado' ? 'bg-green-100 text-green-800' :
-                                  parte.estado === 'Pendiente de Revisión' || parte.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
-                                  parte.estado === 'Rechazado' || parte.estado === 'rechazado' ? 'bg-red-100 text-red-800' :
-                                  'bg-gray-100 text-gray-800'
-                                }`}>
-                                  {parte.estado}
-                                </span>
-                              </Link>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="5" className="px-3 py-4 text-center text-sm text-gray-500">
-                            No hay partes recientes de empleados
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            {/* Vista Móvil - Cards responsivas */}
-            <div className="md:hidden space-y-3">
-              {stats.partesRecientesEmpleados && stats.partesRecientesEmpleados.length > 0 ? (
-                stats.partesRecientesEmpleados.map((parte) => (
-                  <Link 
-                    key={parte.id} 
-                    to={`/ver-detalle/empleado/${parte.id}`}
-                    className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-900">
-                            {parte.numero_parte || 'N/A'}
-                          </span>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            parte.estado === 'Aprobado' || parte.estado === 'aprobado' ? 'bg-green-100 text-green-800' :
-                            parte.estado === 'Pendiente de Revisión' || parte.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
-                            parte.estado === 'Rechazado' || parte.estado === 'rechazado' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {parte.estado}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-1">
-                          <span className="font-medium">Trabajador:</span> {parte.nombre_trabajador || 'Sin empleado'}
-                        </p>
-                        <p className="text-sm text-gray-600 mb-1">
-                          <span className="font-medium">Obra:</span> {parte.nombre_obra || 'Sin obra'}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          <span className="font-medium">Fecha:</span> {new Date(parte.fecha).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div className="text-center text-sm text-gray-500 py-4">
-                  No hay partes recientes de empleados
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Bloque Partes Recientes Proveedores */}
-          <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Partes Recientes Proveedores</h3>
-            
-            {/* Vista Desktop - Tabla completa */}
-            <div className="hidden md:block overflow-x-auto -mx-4 md:mx-0">
-              <div className="inline-block min-w-full align-middle">
-                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                  <table className="min-w-full divide-y divide-gray-300">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nº Parte</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Razón Social</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Obra</th>
-                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {stats.partesRecientesProveedores && stats.partesRecientesProveedores.length > 0 ? (
-                        stats.partesRecientesProveedores.map((parte) => (
-                          <tr key={parte.id} className="hover:bg-gray-50 cursor-pointer">
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Link to={`/parte-proveedor/ver/${parte.id}`} className="block">
-                                {new Date(parte.fecha).toLocaleDateString()}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Link to={`/parte-proveedor/ver/${parte.id}`} className="block">
-                                {parte.numero_parte || 'N/A'}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Link to={`/parte-proveedor/ver/${parte.id}`} className="block">
-                                {parte.proveedores?.razon_social || parte.razon_social || parte.empresa || 'Sin proveedor'}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Link to={`/parte-proveedor/ver/${parte.id}`} className="block">
-                                {parte.nombre_obra || 'Sin obra'}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-4 whitespace-nowrap">
-                              <Link to={`/parte-proveedor/ver/${parte.id}`} className="block">
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  parte.estado === 'Aprobado' || parte.estado === 'aprobado' ? 'bg-green-100 text-green-800' :
-                                  parte.estado === 'Pendiente de Revisión' || parte.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
-                                  parte.estado === 'Rechazado' || parte.estado === 'rechazado' ? 'bg-red-100 text-red-800' :
-                                  'bg-gray-100 text-gray-800'
-                                }`}>
-                                  {parte.estado}
-                                </span>
-                              </Link>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="5" className="px-3 py-4 text-center text-sm text-gray-500">
-                            No hay partes recientes de proveedores
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            {/* Vista Móvil - Cards responsivas */}
-            <div className="md:hidden space-y-3">
-              {stats.partesRecientesProveedores && stats.partesRecientesProveedores.length > 0 ? (
-                stats.partesRecientesProveedores.map((parte) => (
-                  <Link 
-                    key={parte.id} 
-                    to={`/parte-proveedor/ver/${parte.id}`}
-                    className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-900">
-                            {parte.numero_parte || 'N/A'}
-                          </span>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            parte.estado === 'Aprobado' || parte.estado === 'aprobado' ? 'bg-green-100 text-green-800' :
-                            parte.estado === 'Pendiente de Revisión' || parte.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
-                            parte.estado === 'Rechazado' || parte.estado === 'rechazado' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {parte.estado}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-1">
-                          <span className="font-medium">Razón Social:</span> {parte.proveedores?.razon_social || parte.razon_social || parte.empresa || 'Sin proveedor'}
-                        </p>
-                        <p className="text-sm text-gray-600 mb-1">
-                          <span className="font-medium">Obra:</span> {parte.nombre_obra || 'Sin obra'}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          <span className="font-medium">Fecha:</span> {new Date(parte.fecha).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div className="text-center text-sm text-gray-500 py-4">
-                  No hay partes recientes de proveedores
-                </div>
-              )}
-            </div>
-          </div>
+      {/* Quick actions */}
+      {filteredQuickActions.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {filteredQuickActions.map(action => <QuickAction key={action.id} action={action} />)}
         </div>
       )}
 
-      {/* Estadísticas para empleados y proveedores */}
-      {(isEmpleado || isProveedor) && !isAdmin && (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Mis Partes Recientes</h3>
-          <div className="overflow-hidden">
-            <ul className="divide-y divide-gray-200">
-              {stats.partesRecientes && stats.partesRecientes.length > 0 ? (
-                stats.partesRecientes.map((parte) => (
-                  <li key={parte.id} className="py-3">
-                    <Link 
-                      to={isEmpleado ? `/editar-parte/${parte.id}` : `/parte-proveedor/ver/${parte.id}`} 
-                      className="flex justify-between hover:bg-gray-50 p-2 rounded"
-                    >
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {parte.obras?.nombre_obra || 'Sin obra'}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(parte.fecha).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        parte.estado === 'aprobado' ? 'bg-green-100 text-green-800' :
-                        parte.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
-                        parte.estado === 'rechazado' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {parte.estado}
-                      </span>
-                    </Link>
-                  </li>
-                ))
-              ) : (
-                <li className="py-3 text-center text-gray-500">No hay partes recientes</li>
-              )}
-            </ul>
-          </div>
-          
-          {/* Resumen de estados para empleados y proveedores */}
-          <div className="mt-6">
-            <h4 className="text-md font-medium text-gray-800 mb-3">Resumen de Estados</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-green-50 p-4 rounded-lg">
-                <p className="text-sm text-green-800">Aprobados</p>
-                <p className="text-2xl font-bold text-green-700">{stats.partesAprobados}</p>
-              </div>
-              <div className="bg-yellow-50 p-4 rounded-lg">
-                <p className="text-sm text-yellow-800">Pendientes</p>
-                <p className="text-2xl font-bold text-yellow-700">{stats.partesPendientes}</p>
-              </div>
-            </div>
-          </div>
+      {/* Recent partes */}
+      <div className="bg-white rounded-card shadow-card overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-surface-200">
+          <h3 className="text-sm font-semibold text-ink-primary">Mis Partes Recientes</h3>
+          <Link
+            to={isEmpleado ? '/partes-empleados' : '/partes-proveedores'}
+            className="flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700"
+          >
+            Ver todos <ArrowUpRightIcon className="h-3 w-3" aria-hidden="true" />
+          </Link>
         </div>
-      )}
+        {!stats.partesRecientes || stats.partesRecientes.length === 0 ? (
+          <div className="p-5">
+            <EmptyState icon={<ClipboardDocumentListIcon className="h-8 w-8" />} title="Sin partes recientes" description="Todavía no has creado ningún parte." compact />
+          </div>
+        ) : (
+          <ul className="divide-y divide-surface-100">
+            {stats.partesRecientes.map(parte => (
+              <li key={parte.id}>
+                <Link
+                  to={isEmpleado ? `/editar-parte/${parte.id}` : `/parte-proveedor/ver/${parte.id}`}
+                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-50 transition-colors"
+                >
+                  <DocumentTextSolid className="h-5 w-5 text-primary-300 flex-shrink-0" aria-hidden="true" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-ink-primary truncate">
+                      {parte.numero_parte || parte.obras?.nombre_obra || 'Sin obra'}
+                    </p>
+                    <p className="text-xs text-ink-muted">
+                      {new Date(parte.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </p>
+                  </div>
+                  <Badge status={parte.estado} dot>{parte.estado}</Badge>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

@@ -167,7 +167,6 @@ function Dashboard() {
         obra: obrasMap.get(parte.id_obra) || null
       }));
 
-      console.log('[Dashboard] Partes empleados cargados:', partesConRelaciones.length);
       return partesConRelaciones;
     } catch (error) {
       console.error('Error general en fetchPartesEmpleados:', error);
@@ -452,7 +451,6 @@ function Dashboard() {
 
   const handleDescargarPDF = async (parte, event) => {
     try {
-      console.log('Generando PDF para parte:', parte)
       
       // Prevenir propagación del evento de click (evita navegación a la página de detalle)
       // cuando se hace click en el botón de descargar
@@ -483,18 +481,14 @@ function Dashboard() {
       } else {
         try {
           // Para partes de empleados
-          console.log('Obteniendo datos completos del parte de empleado:', parte.id);
-          console.log('Tipo de dato del ID a buscar:', typeof parte.id);
           
           // Asegurar que el ID esté en el formato correcto (string)
           const parteId = String(parte.id).trim();
-          console.log('ID formateado para búsqueda:', parteId);
           
           const parteCompleto = await parteService.getParteById(parteId);
           
           if (!parteCompleto) {
             console.error('No se pudo obtener la información completa del parte de empleado');
-            console.log('Intentando búsqueda alternativa...');
             
             // Intento alternativo: obtener directamente de la tabla con supabaseAdmin
             try {
@@ -511,7 +505,6 @@ function Dashboard() {
               }
               
               if (parteAlternativo) {
-                console.log('Parte encontrado mediante método alternativo:', parteAlternativo.id);
                 const doc = await exportService.generateEmpleadoPDF(parteAlternativo);
                 const fileName = `parte_empleado_${parteAlternativo.numero_parte || 'sin_numero'}_${new Date().toISOString().split('T')[0]}.pdf`;
                 doc.save(fileName);
@@ -528,7 +521,6 @@ function Dashboard() {
             }
           }
           
-          console.log('Datos completos obtenidos:', parteCompleto);
           
           // Generar el PDF utilizando la función específica para partes de empleados
           const doc = await exportService.generateEmpleadoPDF(parteCompleto)
@@ -590,48 +582,34 @@ function Dashboard() {
 
   // Función para eliminar un parte
   const handleDeleteParte = async (e, parte) => {
-    console.log('🔴 [handleDeleteParte] Iniciando eliminación:', {
-      parteId: parte.id,
-      tipo_parte: parte.tipo_parte,
-      estado: parte.estado
-    });
-
     e.stopPropagation(); // Evitar que se propague al clic de la tarjeta
     
     // Usar la función centralizada para verificar permisos
     const canDelete = canUserDeleteParte(parte);
-    console.log('🔍 [handleDeleteParte] Resultado de canUserDeleteParte:', canDelete);
 
     if (!canDelete) {
-      console.log('❌ [handleDeleteParte] Sin permisos, mostrando error');
       toast.error('No tienes permiso para eliminar este parte o el parte no está en estado Borrador.');
       return;
     }
     
-    console.log('🔍 [handleDeleteParte] Confirmación del usuario:', 'Reemplazando window.confirm con console.log');
     setParteToDelete(parte);
     setShowConfirmModal(true);
   }
 
   const handleConfirmDelete = async () => {
     try {
-      console.log('🔄 [handleDeleteParte] Iniciando eliminación...');
       setLoading(true);
       
       if (parteToDelete.tipo_parte === 'proveedor') {
-        console.log('🔄 [handleDeleteParte] Eliminando parte de proveedor...');
         await parteProveedorService.deleteParteProveedor(parteToDelete.id);
       } else {
-        console.log('🔄 [handleDeleteParte] Eliminando parte de empleado...');
         await parteService.deleteParte(parteToDelete.id);
       }
       
-      console.log('✅ [handleDeleteParte] Parte eliminado, recargando datos...');
       // Recargar datos
       const [empleados, proveedores] = await Promise.all([fetchPartesEmpleados(), fetchPartesProveedores()]);
       setAllPartes([...(empleados || []), ...(proveedores || [])]);
 
-      console.log('✅ [handleDeleteParte] Eliminación completada exitosamente');
       toast.success('Parte eliminado correctamente');
     } catch (error) {
       console.error('❌ [handleDeleteParte] Error al eliminar el parte:', error);
@@ -646,7 +624,6 @@ function Dashboard() {
 
   // Función para exportar partes de empleados
   const handleExportEmpleados = async () => {
-    console.log('🔴 CLICK en Exportar Empleados');
     alert('Exportando partes de empleados - Verificar consola...');
     
     if (!(isSuperAdmin || isAdmin)) {
@@ -661,17 +638,8 @@ function Dashboard() {
         toast.error('No hay partes de empleados para exportar');
         return;
       }
-      console.log('Exportando partes de empleados:', partesEmpleados.length, partesEmpleados);
       try {
-        // Verificar librería XLSX antes de llamar al servicio
-        console.log('Verificando antes de exportar:', { 
-          XLSX: typeof window.XLSX, 
-          writeFile: typeof window.XLSX?.writeFile
-        });
-        
-        console.log('🔄 Llamando a exportarPartesEmpleados...');
         const resultado = await exportarPartesEmpleados(partesEmpleados);
-        console.log('✅ Resultado exportarPartesEmpleados:', resultado);
         
         toast.dismiss();
         if (resultado && resultado.success === false) {
@@ -686,7 +654,6 @@ function Dashboard() {
         
         // Intento de fallback manual en caso de error
         try {
-          console.log('Intentando mostrar exportLog como fallback');
           showExportLog();
         } catch(fallbackError) {
           console.error('Error en fallback:', fallbackError);
@@ -713,7 +680,6 @@ function Dashboard() {
         toast.error('No hay partes de proveedores para exportar');
         return;
       }
-      console.log('Exportando partes de proveedores:', partesProveedores.length, partesProveedores);
       try {
         const resultado = await exportarPartesProveedores(partesProveedores);
         toast.dismiss();
@@ -747,7 +713,6 @@ function Dashboard() {
         toast.error('No hay partes para exportar');
         return;
       }
-      console.log('Exportando todos los partes:', filteredPartes.length, filteredPartes);
       try {
         const resultado = await exportarTodosPartes(filteredPartes);
         toast.dismiss();

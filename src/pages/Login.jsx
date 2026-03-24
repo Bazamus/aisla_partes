@@ -2,100 +2,98 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useAuth } from '../contexts/AuthContext'
-import { LockClosedIcon } from '@heroicons/react/24/outline'
+import {
+  LockClosedIcon,
+  EnvelopeIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  ClipboardDocumentListIcon,
+  DevicePhoneMobileIcon,
+  ChartBarIcon,
+} from '@heroicons/react/24/outline'
 import { supabase } from '../lib/supabase'
 import authService from '../services/authService'
-import '../assets/login-pattern.css'
+
+// ── Características del panel izquierdo ──────────────────────────────────
+const FEATURES = [
+  {
+    icon: <ClipboardDocumentListIcon className="h-5 w-5" />,
+    title: 'Gestión completa de partes',
+    desc:  'Crea, aprueba y exporta partes de trabajo de empleados y proveedores.',
+  },
+  {
+    icon: <DevicePhoneMobileIcon className="h-5 w-5" />,
+    title: 'Diseñado para el campo',
+    desc:  'Interfaz optimizada para móvil. Trabaja desde cualquier dispositivo.',
+  },
+  {
+    icon: <ChartBarIcon className="h-5 w-5" />,
+    title: 'Reportes en tiempo real',
+    desc:  'Visualiza estadísticas, costes y rendimiento de cada obra y empleado.',
+  },
+]
+
+// ── Spinner ───────────────────────────────────────────────────────────────
+const Spinner = () => (
+  <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+    <path  className="opacity-75"  fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+  </svg>
+)
 
 export default function Login() {
   const navigate = useNavigate()
   const { user, login, createAdminUser } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [adminExists, setAdminExists] = useState(true) // Por defecto asumimos que existe
-  const [isCreatingAdmin, setIsCreatingAdmin] = useState(false)
 
-  // Verificación simplificada: si hay usuario, redirigir al inicio
+  const [email,            setEmail]            = useState('')
+  const [password,         setPassword]         = useState('')
+  const [showPassword,     setShowPassword]     = useState(false)
+  const [isLoading,        setIsLoading]        = useState(false)
+  const [error,            setError]            = useState('')
+  const [adminExists,      setAdminExists]      = useState(true)
+  const [isCreatingAdmin,  setIsCreatingAdmin]  = useState(false)
+
+  // Si ya hay sesión activa, redirigir
   useEffect(() => {
-    if (user) {
-      navigate('/')
-    }
+    if (user) navigate('/')
   }, [user, navigate])
 
-  // Verificar si existe un administrador o superadmin
+  // Verificar si existe administrador
   useEffect(() => {
     const checkAdmin = async () => {
       try {
-        // Si estamos en modo de emergencia, no verificar
-        if (window.EMERGENCY_MODE) {
-          return
-        }
-
-        // Llamar a la función RPC para verificar si hay administradores registrados
-        const { data: exists, error: rpcError } = await supabase.rpc('hay_administradores_registrados');
-
-        if (rpcError) {
-          console.error('Error al llamar a la función hay_administradores_registrados:', rpcError);
-          setAdminExists(false);
-          return;
-        }
-
-        // La función devuelve un booleano directamente
-        setAdminExists(exists);
-
-        // Si no hay admin, establecer admin@partes.com como email por defecto
-        if (!exists) {
-          setEmail('admin@partes.com');
-          setPassword('admin123');
-        }
-      } catch (err) {
-        console.error('Error al verificar administrador:', err)
+        if (window.EMERGENCY_MODE) return
+        const { data: exists, error: rpcError } = await supabase.rpc('hay_administradores_registrados')
+        if (rpcError) { setAdminExists(false); return }
+        setAdminExists(exists)
+        if (!exists) { setEmail('admin@partes.com'); setPassword('admin123') }
+      } catch {
         setAdminExists(false)
-        // Establecer admin@partes.com como email por defecto en caso de error
         setEmail('admin@partes.com')
         setPassword('admin123')
       }
     }
-
     checkAdmin()
   }, [])
 
+  // ── Handlers ─────────────────────────────────────────────────────────────
   const handleLogin = async (e) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
-
     try {
-      // Usar directamente el servicio de autenticación
       const result = await authService.login(email, password)
-      
-      // Verificar si hay errores
-      if (result && result.error) {
-        console.error('Error de autenticación:', result.error)
-        
-        // Usar el mensaje personalizado del servicio
-        const errorMsg = result.message || 
-          (result.error.code === 'email_not_confirmed' ? 'Email no confirmado. Revisa tu bandeja de entrada.' :
-          result.error.code === 'invalid_credentials' ? 'Credenciales inválidas. Verifica tu email y contraseña.' :
-          'Error al iniciar sesión')
-        
-        setError(errorMsg)
-        toast.error(errorMsg)
-        return // Evitar continuar con el proceso
+      if (result?.error) {
+        const msg = result.message || 'Error al iniciar sesión'
+        setError(msg)
+        toast.error(msg)
+        return
       }
-      
-      // Si no hay errores, usar el contexto de autenticación para establecer la sesión
-      if (result.data) {
-        // Actualizar el contexto de autenticación usando login del contexto
-        await login(email, password)
-      }
-    } catch (err) {
-      console.error('Error en el proceso de inicio de sesión:', err)
-      const errorMsg = 'Error inesperado al iniciar sesión. Por favor, inténtalo de nuevo.'
-      setError(errorMsg)
-      toast.error(errorMsg)
+      if (result.data) await login(email, password)
+    } catch {
+      const msg = 'Error inesperado. Por favor, inténtalo de nuevo.'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setIsLoading(false)
     }
@@ -104,278 +102,232 @@ export default function Login() {
   const handleCreateAdmin = async () => {
     setError('')
     setIsCreatingAdmin(true)
-
     try {
-      // Si la función createAdminUser no está disponible, usar supabase directamente
       if (typeof createAdminUser !== 'function') {
-        console.log('Usando método alternativo para crear administrador');
-
-        // Verificar si existe un administrador
-        const { data: adminRoles } = await supabase
-          .from('roles')
-          .select('id')
-          .eq('nombre', 'administrador')
-          .single();
-
+        const { data: adminRoles } = await supabase.from('roles').select('id').eq('nombre', 'administrador').single()
         if (!adminRoles) {
-          // Crear rol administrador si no existe
-          await supabase
-            .from('roles')
-            .insert({
-              nombre: 'administrador',
-              descripcion: 'Rol con acceso administrativo al sistema'
-            });
+          await supabase.from('roles').insert({ nombre: 'administrador', descripcion: 'Rol administrativo' })
         }
-
-        // Crear usuario en auth
-        const { data: userData, error: signupError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              rol: 'administrador',
-              nombre: 'Administrador'
-            },
-            emailRedirectTo: window.location.origin
-          }
-        });
-
-        if (signupError) {
-          throw signupError;
-        }
-
-        toast.success('Administrador creado exitosamente');
-        setAdminExists(true);
-        await login(email, password);
+        const { error: signupError } = await supabase.auth.signUp({
+          email, password,
+          options: { data: { rol: 'administrador', nombre: 'Administrador' }, emailRedirectTo: window.location.origin },
+        })
+        if (signupError) throw signupError
+        toast.success('Administrador creado')
+        setAdminExists(true)
+        await login(email, password)
       } else {
-        // Usar la función del contexto si está disponible
-        const result = await createAdminUser(email, password);
-
+        const result = await createAdminUser(email, password)
         if (result.success) {
-          toast.success('Administrador creado exitosamente');
-          setAdminExists(true);
-          await login(email, password);
+          toast.success('Administrador creado')
+          setAdminExists(true)
+          await login(email, password)
         } else if (result.exists) {
-          toast('Ya existe un administrador, inicia sesión');
-          setAdminExists(true);
+          toast('Ya existe un administrador, inicia sesión')
+          setAdminExists(true)
         } else {
-          throw new Error(result.error || 'Error desconocido');
+          throw new Error(result.error || 'Error desconocido')
         }
       }
-    } catch (err) {
-      console.error('Error al crear administrador:', err);
-      setError('No se pudo crear el administrador');
-      toast.error('Error al crear administrador');
-
-      // Intentar iniciar sesión de todos modos
-      try {
-        await login(email, password);
-      } catch (loginErr) {
-        console.error('Error al intentar iniciar sesión:', loginErr);
-      }
+    } catch {
+      setError('No se pudo crear el administrador')
+      toast.error('Error al crear administrador')
+      try { await login(email, password) } catch {}
     } finally {
-      setIsCreatingAdmin(false);
+      setIsCreatingAdmin(false)
     }
   }
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 px-4" style={{background: 'linear-gradient(to bottom right, #e0f2fe, #f5f5f5)'}}>
-      <div className="flex justify-center">
-        <div className="w-full max-w-5xl flex rounded-xl shadow-2xl overflow-hidden">
-          {/* Panel izquierdo - Imagen/Logo */}
-          <div className="hidden lg:block lg:w-1/2 p-12 relative" style={{backgroundColor: '#0d9488'}}>
-            <div className="absolute inset-0 opacity-10 bg-pattern-squares"></div>
-            <div className="relative h-full flex flex-col items-center justify-between">
-              <div className="w-64 mb-8">
-                <img
-                  src="/aisla_logo.svg"
-                  alt="Aisla Partes Logo"
-                  className="w-full h-auto object-contain"
+    <div className="min-h-screen flex items-stretch bg-surface-50">
+
+      {/* ── Panel izquierdo (solo desktop) ─────────────────────────── */}
+      <div className="hidden lg:flex lg:w-3/5 flex-col bg-primary-600 relative overflow-hidden">
+        {/* Patrón decorativo */}
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+          aria-hidden="true"
+        />
+
+        <div className="relative flex flex-col justify-between h-full px-12 py-16">
+          {/* Logo */}
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-lg">AP</span>
+              </div>
+              <span className="text-white text-2xl font-bold tracking-tight">Aisla Partes</span>
+            </div>
+            <p className="text-primary-100 text-sm mt-1">Gestión Profesional de Partes de Trabajo</p>
+          </div>
+
+          {/* Headline */}
+          <div className="my-auto">
+            <h1 className="text-4xl font-bold text-white leading-tight mb-6">
+              La herramienta que necesitan los instaladores profesionales
+            </h1>
+            <p className="text-primary-100 text-lg leading-relaxed mb-10">
+              Digitaliza tu empresa. Gestiona empleados, obras y partes desde cualquier dispositivo.
+            </p>
+
+            {/* Features */}
+            <div className="space-y-5">
+              {FEATURES.map((f, i) => (
+                <div key={i} className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-9 h-9 bg-white/15 rounded-lg flex items-center justify-center text-white">
+                    {f.icon}
+                  </div>
+                  <div>
+                    <p className="text-white font-medium text-sm">{f.title}</p>
+                    <p className="text-primary-200 text-xs mt-0.5 leading-relaxed">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer izquierdo */}
+          <p className="text-primary-300 text-xs">
+            © {new Date().getFullYear()} Aisla Partes · Todos los derechos reservados
+          </p>
+        </div>
+      </div>
+
+      {/* ── Panel derecho: formulario ───────────────────────────────── */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 bg-white">
+        <div className="w-full max-w-sm animate-fade-in">
+
+          {/* Logo móvil */}
+          <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
+            <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-lg">AP</span>
+            </div>
+            <span className="text-ink-primary text-xl font-bold">Aisla Partes</span>
+          </div>
+
+          {/* Encabezado formulario */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-ink-primary">Bienvenido de nuevo</h2>
+            <p className="text-sm text-ink-muted mt-1">Accede con tu cuenta para continuar</p>
+          </div>
+
+          {/* Alerta de error */}
+          {error && (
+            <div
+              className="mb-5 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-card text-red-700 text-sm animate-slide-up"
+              role="alert"
+            >
+              <svg className="h-5 w-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+              </svg>
+              {error}
+            </div>
+          )}
+
+          {/* Aviso sin admin */}
+          {adminExists === false && (
+            <div
+              className="mb-5 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-card text-amber-700 text-sm"
+              role="status"
+            >
+              <svg className="h-5 w-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              No existe administrador. Usa las credenciales indicadas para crear uno.
+            </div>
+          )}
+
+          {/* Formulario */}
+          <form onSubmit={handleLogin} className="space-y-5" noValidate>
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-ink-secondary mb-1.5">
+                Email
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" aria-hidden="true">
+                  <EnvelopeIcon className="h-5 w-5" />
+                </span>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="tu@empresa.com"
+                  className="w-full pl-10 pr-4 py-3 rounded-input border border-surface-200 bg-white text-ink-primary placeholder-ink-muted text-base focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                 />
               </div>
-              <div className="text-white text-center">
-                <h2 className="text-3xl font-bold mb-6">Sistema de Gestión de Partes de Trabajo</h2>
-                <p className="text-lg opacity-90 mb-4">
-                  Accede al sistema para gestionar empleados, obras y partes de trabajo de manera eficiente.
-                </p>
-                <div className="grid grid-cols-3 gap-4 mt-12">
-                  <div className="bg-white/10 p-4 rounded-lg">
-                    <div className="text-4xl font-bold">+500</div>
-                    <div className="text-sm">Partes gestionados</div>
-                  </div>
-                  <div className="bg-white/10 p-4 rounded-lg">
-                    <div className="text-4xl font-bold">+100</div>
-                    <div className="text-sm">Empleados</div>
-                  </div>
-                  <div className="bg-white/10 p-4 rounded-lg">
-                    <div className="text-4xl font-bold">+50</div>
-                    <div className="text-sm">Obras activas</div>
-                  </div>
-                </div>
-              </div>
-              <div className="text-white/70 text-sm mt-8">
-                {new Date().getFullYear()} AISLA. Todos los derechos reservados.
-              </div>
-            </div>
-          </div>
-
-          {/* Panel derecho - Formulario */}
-          <div className="w-full lg:w-1/2 bg-white p-8 md:p-12">
-            <div className="lg:hidden flex justify-center mb-8">
-              <img
-                src="/aisla_logo.svg"
-                alt="Aisla Partes Logo"
-                className="h-16 object-contain"
-              />
             </div>
 
-            <div className="max-w-md mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Bienvenido/a
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Accede a tu cuenta para continuar con la gestión de partes
-              </p>
-
-              {error && (
-                <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md text-sm">
-                  <div className="flex">
-                    <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                    {error}
-                  </div>
-                </div>
-              )}
-
-              {adminExists === false && (
-                <div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 rounded-md text-sm">
-                  <div className="flex">
-                    <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                    No existe un usuario administrador. Se creará uno con las credenciales proporcionadas.
-                  </div>
-                </div>
-              )}
-
-              <form className="space-y-6" onSubmit={handleLogin}>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
-                      style={{transition: 'all 0.2s'}}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#0d9488'
-                        e.target.style.boxShadow = '0 0 0 3px rgba(1, 78, 208, 0.1)'
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = '#d1d5db'
-                        e.target.style.boxShadow = 'none'
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Contraseña
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
-                      style={{transition: 'all 0.2s'}}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#0d9488'
-                        e.target.style.boxShadow = '0 0 0 3px rgba(1, 78, 208, 0.1)'
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = '#d1d5db'
-                        e.target.style.boxShadow = 'none'
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  {adminExists === false ? (
-                    <button
-                      type="button"
-                      onClick={handleCreateAdmin}
-                      disabled={isCreatingAdmin}
-                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-                    >
-                      {isCreatingAdmin ? (
-                        <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Creando administrador...
-                        </>
-                      ) : (
-                        <>
-                          <LockClosedIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-                          Crear administrador
-                        </>
-                      )}
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition-colors"
-                      style={{
-                        backgroundColor: '#0d9488',
-                        '&:hover': {backgroundColor: '#004fd7'},
-                        '&:focus': {outline: 'none', boxShadow: '0 0 0 3px rgba(1, 78, 208, 0.1)'}
-                      }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#004fd7'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#0d9488'}
-                    >
-                      {isLoading ? (
-                        <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Iniciando sesión...
-                        </>
-                      ) : (
-                        <>
-                          <LockClosedIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-                          Iniciar sesión
-                        </>
-                      )}
-                    </button>
-                  )}
-                </div>
-              </form>
-
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <p className="text-xs text-gray-500 text-center">
-                  Si tienes problemas para acceder, contacta al administrador del sistema.
-                </p>
+            {/* Contraseña */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-ink-secondary mb-1.5">
+                Contraseña
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" aria-hidden="true">
+                  <LockClosedIcon className="h-5 w-5" />
+                </span>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-10 pr-12 py-3 rounded-input border border-surface-200 bg-white text-ink-primary placeholder-ink-muted text-base focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-secondary transition-colors"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {showPassword
+                    ? <EyeSlashIcon className="h-5 w-5" />
+                    : <EyeIcon      className="h-5 w-5" />
+                  }
+                </button>
               </div>
             </div>
-          </div>
+
+            {/* Botón */}
+            {adminExists === false ? (
+              <button
+                type="button"
+                onClick={handleCreateAdmin}
+                disabled={isCreatingAdmin}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-input bg-green-600 hover:bg-green-700 text-white font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isCreatingAdmin ? <><Spinner /> Creando administrador...</> : <><LockClosedIcon className="h-5 w-5" /> Crear administrador</>}
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-input bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              >
+                {isLoading ? <><Spinner /> Iniciando sesión...</> : <><LockClosedIcon className="h-5 w-5" /> Iniciar sesión</>}
+              </button>
+            )}
+          </form>
+
+          {/* Footer formulario */}
+          <p className="mt-8 text-xs text-ink-muted text-center">
+            ¿Problemas para acceder? Contacta con el administrador del sistema.
+          </p>
+          <p className="mt-3 text-xs text-ink-muted text-center">
+            Aisla Partes v2.0
+          </p>
         </div>
       </div>
     </div>
