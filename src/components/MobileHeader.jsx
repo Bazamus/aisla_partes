@@ -150,6 +150,10 @@ const MobileHeader = () => {
     return links;
   };
 
+  // Solo mostrar en páginas de detalle que necesitan botón "Atrás"
+  // En páginas principales el topbar de Layout.jsx ya cubre la navegación
+  if (!shouldShowBackButton()) return null;
+
   return (
     <>
       {/* Header móvil fijo - oculto cuando hay modal abierto */}
