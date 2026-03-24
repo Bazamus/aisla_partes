@@ -341,13 +341,13 @@ const ParteProveedorPage = () => {
               Estado
             </label>
             {/* Verificar si el usuario tiene un rol que le permita editar el estado */}
-            {/* Los roles proveedor y empleado no pueden cambiar el estado, excepto el superadmin admin@vimar.com */}
+            {/* Los roles proveedor y empleado no pueden cambiar el estado, excepto el superadmin admin@partes.com */}
             {/* Implementamos una condición más clara y robusta */}
             {(() => {
               // Prioridad para SuperAdmin (con 'S' mayúscula)
               if (hasRole('SuperAdmin')) return true;
               // Caso especial para el superadmin principal por email
-              if (user?.email === 'admin@vimar.com') return true;
+              if (user?.email === 'admin@partes.com') return true;
               
               // Los usuarios con rol proveedor o empleado nunca pueden editar el estado
               if (hasRole('proveedor') || hasRole('empleado')) return false;

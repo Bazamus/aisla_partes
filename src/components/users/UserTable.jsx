@@ -11,9 +11,9 @@ const UserTable = ({ users = [], onAssignRoles, onResetPassword, onDeleteUser, r
 
   // Manejadores para las acciones de la tabla
   const handleEditRoles = (userId) => {
-    // No permitir editar los roles del usuario admin@vimar.com (superadmin)
+    // No permitir editar los roles del usuario admin@partes.com (superadmin)
     const user = users.find(u => u.id === userId);
-    if (user && user.email === 'admin@vimar.com') {
+    if (user && user.email === 'admin@partes.com') {
       alert('No se pueden modificar los roles del administrador principal');
       return;
     }
@@ -23,9 +23,9 @@ const UserTable = ({ users = [], onAssignRoles, onResetPassword, onDeleteUser, r
   };
 
   const handleResetPassword = (userId) => {
-    // No permitir cambiar la contraseña del usuario admin@vimar.com (superadmin)
+    // No permitir cambiar la contraseña del usuario admin@partes.com (superadmin)
     const user = users.find(u => u.id === userId);
-    if (user && user.email === 'admin@vimar.com') {
+    if (user && user.email === 'admin@partes.com') {
       alert('No se puede cambiar la contraseña del administrador principal');
       return;
     }
@@ -72,7 +72,7 @@ const UserTable = ({ users = [], onAssignRoles, onResetPassword, onDeleteUser, r
   // Función para obtener el tipo de usuario
   const getUserType = (user) => {
     // Si es el superadmin, mostrar un tipo especial
-    if (user.email === 'admin@vimar.com') {
+    if (user.email === 'admin@partes.com') {
       return 'Super Administrador';
     }
     
@@ -201,7 +201,7 @@ const UserTable = ({ users = [], onAssignRoles, onResetPassword, onDeleteUser, r
 
   // Función para verificar si un usuario es el superadmin
   const isSuperAdmin = (user) => {
-    return user.email === 'admin@vimar.com';
+    return user.email === 'admin@partes.com';
   };
 
   if (isLoading) {

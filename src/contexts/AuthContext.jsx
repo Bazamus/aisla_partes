@@ -261,8 +261,8 @@ export function AuthProvider({ children }) {
   const isAdmin = useCallback(() => hasRole('administrador') || hasRole('superadmin'), [hasRole]);
   const isSupervisor = useCallback(() => {
     // Acceso directo para el superadmin principal
-    if (user && user.email === 'admin@vimar.com') {
-      console.log('[SuperAdmin] Usuario admin@vimar.com reconocido como supervisor');
+    if (user && user.email === 'admin@partes.com') {
+      console.log('[SuperAdmin] Usuario admin@partes.com reconocido como supervisor');
       return true;
     }
     return hasRole('supervisor') || hasRole('administrador') || hasRole('superadmin');
@@ -571,9 +571,9 @@ export function AuthProvider({ children }) {
     try {
       console.log('Redirigiendo usuario según su rol:', userId);
 
-      // Si es admin@vimar.com, redirigir al dashboard principal
-      if (user?.email === 'admin@vimar.com') {
-        console.log('Usuario admin@vimar.com detectado, redirigiendo al dashboard principal');
+      // Si es admin@partes.com, redirigir al dashboard principal
+      if (user?.email === 'admin@partes.com') {
+        console.log('Usuario admin@partes.com detectado, redirigiendo al dashboard principal');
         navigate('/');
         return;
       }

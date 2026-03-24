@@ -16,14 +16,14 @@ const InformacionPrincipalCard = ({ formData, setFormData, readOnly = false }) =
   console.log('[InformacionPrincipalCard] Roles del usuario:', user?.user_metadata?.roles || 'No roles');
 
   // Verificar si el usuario es SuperAdmin o Administrador
-  const isAdminOrSuperAdmin = hasRole('superadmin') || hasRole('administrador') || hasRole('admin') || hasRole('SuperAdmin') || user?.email === 'admin@vimar.com';
+  const isAdminOrSuperAdmin = hasRole('superadmin') || hasRole('administrador') || hasRole('admin') || hasRole('SuperAdmin') || user?.email === 'admin@partes.com';
   
   console.log('[InformacionPrincipalCard] Verificación de roles:');
   console.log('- hasRole("superadmin"):', hasRole('superadmin'));
   console.log('- hasRole("administrador"):', hasRole('administrador'));
   console.log('- hasRole("admin"):', hasRole('admin'));
   console.log('- hasRole("SuperAdmin"):', hasRole('SuperAdmin'));
-  console.log('- user?.email === "admin@vimar.com":', user?.email === 'admin@vimar.com');
+  console.log('- user?.email === "admin@partes.com":', user?.email === 'admin@partes.com');
   console.log('- isAdminOrSuperAdmin final:', isAdminOrSuperAdmin);
 
   // Establecer "Demo" como cliente por defecto al montar el componente

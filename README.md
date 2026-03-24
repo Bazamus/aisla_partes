@@ -18,4 +18,4 @@ Aplicación demo de gestión de partes de trabajo.
 
 ## Credenciales demo
 
-- Admin: `admin@vimar.com` / `admin123`
+- Admin: `admin@partes.com` / `admin123`

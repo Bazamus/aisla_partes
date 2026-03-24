@@ -91,7 +91,7 @@ function Dashboard() {
   const [parteToDelete, setParteToDelete] = useState(null); // Estado para guardar el parte a eliminar
   const [showMobileFilters, setShowMobileFilters] = useState(false); // Estado para mostrar/ocultar filtros en móvil
   const itemsPerPage = 15 // 15 elementos por página (3x5 en tarjetas o 15 filas en tabla)
-  const isSuperAdmin = user?.email === 'admin@vimar.com'
+  const isSuperAdmin = user?.email === 'admin@partes.com'
   const isInitialLoad = useRef(true) // Evitar resetear página en la carga inicial
 
   // Actualizar caché de datos cuando cambian las listas de filtros

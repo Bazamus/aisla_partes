@@ -187,7 +187,7 @@ async function testActiveUsers() {
   }
   
   // Verificar si el superadmin está presente (en cualquier parte de la página)
-  const superadminElement = findElementByText('*', 'admin@vimar.com');
+  const superadminElement = findElementByText('*', 'admin@partes.com');
   
   if (superadminElement) {
     console.log('✅ Usuario superadmin encontrado en la página');
@@ -195,7 +195,7 @@ async function testActiveUsers() {
     console.warn('⚠️ No se encontró el usuario superadmin en la página');
     
     // Verificar si hay algún elemento que contenga parte del email
-    const partialEmailElement = findElementByText('*', 'admin@vimar.com');
+    const partialEmailElement = findElementByText('*', 'admin@partes.com');
     if (partialEmailElement) {
       console.log('🔍 Se encontró un elemento con parte del email del superadmin');
     }

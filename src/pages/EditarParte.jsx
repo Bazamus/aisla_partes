@@ -399,7 +399,7 @@ export default function EditarParte() {
 
   // Función para determinar si el usuario puede editar el parte
   const puedeEditarParte = () => {
-    const puedeEditarEstado = hasRole('SuperAdmin') || hasRole('superadmin') || hasRole('admin') || hasRole('administrador') || hasRole('supervisor') || user?.email === 'admin@vimar.com'
+    const puedeEditarEstado = hasRole('SuperAdmin') || hasRole('superadmin') || hasRole('admin') || hasRole('administrador') || hasRole('supervisor') || user?.email === 'admin@partes.com'
     return puedeEditarEstado || formData.estado === 'Borrador'
   }
 
@@ -411,7 +411,7 @@ export default function EditarParte() {
     setLoading(true)
 
     // Validar permisos de edición según el estado del parte
-    const puedeEditarEstado = hasRole('SuperAdmin') || hasRole('superadmin') || hasRole('admin') || hasRole('administrador') || hasRole('supervisor') || user?.email === 'admin@vimar.com'
+    const puedeEditarEstado = hasRole('SuperAdmin') || hasRole('superadmin') || hasRole('admin') || hasRole('administrador') || hasRole('supervisor') || user?.email === 'admin@partes.com'
     
     if (!puedeEditarEstado && formData.estado !== 'Borrador') {
       toast.error('Solo puedes editar partes en estado "Borrador". Los administradores pueden cambiar el estado.')
@@ -674,7 +674,7 @@ export default function EditarParte() {
                        // Prioridad para SuperAdmin (con 'S' mayúscula)
                        if (hasRole('SuperAdmin')) return true;
                        // Caso especial para el superadmin principal por email
-                       if (user?.email === 'admin@vimar.com') return true;
+                       if (user?.email === 'admin@partes.com') return true;
                        
                        // Los usuarios con rol proveedor o empleado nunca pueden editar el estado
                        if (hasRole('proveedor') || hasRole('empleado')) return false;

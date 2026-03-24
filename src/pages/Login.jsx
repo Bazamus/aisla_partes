@@ -45,16 +45,16 @@ export default function Login() {
         // La función devuelve un booleano directamente
         setAdminExists(exists);
 
-        // Si no hay admin, establecer admin@vimar.com como email por defecto
+        // Si no hay admin, establecer admin@partes.com como email por defecto
         if (!exists) {
-          setEmail('admin@vimar.com');
+          setEmail('admin@partes.com');
           setPassword('admin123');
         }
       } catch (err) {
         console.error('Error al verificar administrador:', err)
         setAdminExists(false)
-        // Establecer admin@vimar.com como email por defecto en caso de error
-        setEmail('admin@vimar.com')
+        // Establecer admin@partes.com como email por defecto en caso de error
+        setEmail('admin@partes.com')
         setPassword('admin123')
       }
     }
